@@ -23,14 +23,14 @@ public class CourseController {
     private CourseService courseService;
 
     @GetMapping
-    private ResponseEntity<ApiResponse> getAllCourse() {
+    public ResponseEntity<ApiResponse> getAllCourse() {
         List<Course> courses = courseService.getAllCourse();
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<ApiResponse> getCourseById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getCourseById(@PathVariable("id") Long id) {
         Course courses = courseService.getCourseById(id);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
@@ -41,7 +41,7 @@ public class CourseController {
     }
 
     @PostMapping
-    private ResponseEntity<ApiResponse> insertCourse(@RequestBody Course course) {
+    public ResponseEntity<ApiResponse> insertCourse(@RequestBody Course course) {
         Course courses = courseService.insertCourse(course.getName());
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
@@ -52,7 +52,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<ApiResponse> updateCourse(@PathVariable("id") Long id, @RequestBody Course course) {
+    public ResponseEntity<ApiResponse> updateCourse(@PathVariable("id") Long id, @RequestBody Course course) {
         Course courses = courseService.updateCourse(id, course.getName());
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
@@ -63,7 +63,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<ApiResponse> disableCourse(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> disableCourse(@PathVariable("id") Long id) {
         boolean valid = courseService.disableCourse(id);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), null);
         if (valid) {

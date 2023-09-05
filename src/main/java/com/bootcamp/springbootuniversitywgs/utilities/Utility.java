@@ -28,6 +28,17 @@ public class Utility {
         return valid;
     }
 
+    // Metode untuk memberikan validasi inputan pengguna
+    public int inputContainsNumber(String input) {
+        int valid = 0;
+        if (input == null || input.isEmpty()) {
+            valid = 1; // Jika inputan pengguna berupa null atau kosong, maka akan memberikan nilai 1(yang berarti error)
+        } else if (!input.matches("^[a-zA-Z0-9\\s]+$")) {
+            valid = 2; // Jika inputan pengguna selain huruf, angka dan spasi, maka akan memberikan nilai 2(yang berarti error)
+        }
+        return valid;
+    }
+
     // Metode untuk memberikan validasi inputan nilai quiz/ujian pengguna
     public int gradeCheck(Integer grade) {
         int valid = 0;

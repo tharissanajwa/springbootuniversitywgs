@@ -24,14 +24,14 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    private ResponseEntity<ApiResponse> getAllStudent() {
+    public ResponseEntity<ApiResponse> getAllStudent() {
         List<Student> students = studentService.getAllStudent();
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<ApiResponse> getStudentById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getStudentById(@PathVariable("id") Long id) {
         Student students = studentService.getStudentById(id);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
@@ -42,7 +42,7 @@ public class StudentController {
     }
 
     @PostMapping
-    private ResponseEntity<ApiResponse> insertStudent(@RequestBody Student student) {
+    public ResponseEntity<ApiResponse> insertStudent(@RequestBody Student student) {
         Student students = studentService.insertStudent(student.getName(), student.getMajor().getId());
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
@@ -53,7 +53,7 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<ApiResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
+    public ResponseEntity<ApiResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
         Student students = studentService.updateStudent(id, student.getName(), student.getMajor().getId());
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
@@ -64,7 +64,7 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<ApiResponse> disableStudent(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> disableStudent(@PathVariable("id") Long id) {
         boolean valid = studentService.disableStudent(id);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), null);
         if (valid) {

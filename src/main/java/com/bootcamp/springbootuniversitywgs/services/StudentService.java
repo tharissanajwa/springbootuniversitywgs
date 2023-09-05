@@ -51,42 +51,26 @@ public class StudentService {
 
     public Student insertStudent(String name, Long majorId) {
         Student newStudent = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, student name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, student name can only filled by letters";
+        if (inputValidation(name, majorId) != "") {
+            responseMessage = inputValidation(name, majorId);
         } else {
-            if (majorService.getMajorById(majorId) != null) {
-                newStudent = new Student(utility.inputTrim(name), majorService.getMajorById(majorId));
-                studentRepository.save(newStudent);
-                responseMessage = "Data successfully added!";
-            } else {
-                responseMessage = "Sorry, id major is not found.";
-            }
+            newStudent = new Student(utility.inputTrim(name), majorService.getMajorById(majorId));
+            studentRepository.save(newStudent);
+            responseMessage = "Data successfully added!";
         }
         return newStudent;
     }
 
     public Student updateStudent(Long id, String name, Long majorId) {
         Student student = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, student name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, student name can only filled by letters";
-        } else {
-            if (getStudentById(id) != null) {
-                if (majorService.getMajorById(majorId) != null) {
-                    getStudentById(id).setName(utility.inputTrim(name));
-                    getStudentById(id).setMajor(majorService.getMajorById(majorId));
-                    student = getStudentById(id);
-                    studentRepository.save(student);
-                    responseMessage = "Data successfully updated!";
-                } else {
-                    responseMessage = "Sorry, id major is not found.";
-                }
-            }
+        if (inputValidation(name, majorId) != "") {
+            responseMessage = inputValidation(name, majorId);
+        } else if (getStudentById(id) != null) {
+            getStudentById(id).setName(utility.inputTrim(name));
+            getStudentById(id).setMajor(majorService.getMajorById(majorId));
+            student = getStudentById(id);
+            studentRepository.save(student);
+            responseMessage = "Data successfully updated!";
         }
         return student;
     }
@@ -99,6 +83,20 @@ public class StudentService {
             studentRepository.save(student);
             result = true;
             responseMessage = "Data deactivated successfully!";
+        }
+        return result;
+    }
+
+    private String inputValidation(String name, Long majorId) {
+        String result = "";
+        if (utility.inputCheck(utility.inputTrim(name)) == 1) {
+            result = "Sorry, major name cannot be blank.";
+        } else if (utility.inputCheck(utility.inputTrim(name)) == 2) {
+            result = "Sorry, major name can only filled by letters";
+        } else if (majorService.getMajorById(majorId) == null) {
+            result = "Sorry, id major is not found.";
+        } else {
+            // do nothing
         }
         return result;
     }

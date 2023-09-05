@@ -6,7 +6,7 @@ public class ApiResponse {
     private Object data;     // Data yang akan dikirimkan bersama respons
 
     public ApiResponse() {
-        // Constructor default tanpa parameter
+        // Constructor default
     }
 
     public ApiResponse(String message, Object data) {

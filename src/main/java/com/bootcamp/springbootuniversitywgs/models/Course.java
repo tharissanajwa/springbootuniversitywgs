@@ -45,10 +45,6 @@ public class Course {
         this.name = name;
     }
 
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
     public void setDeleted(boolean deleted) {
         isDeleted = deleted;
     }

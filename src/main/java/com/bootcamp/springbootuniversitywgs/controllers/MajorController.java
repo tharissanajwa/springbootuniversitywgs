@@ -24,14 +24,14 @@ public class MajorController {
     private MajorService majorService;
 
     @GetMapping
-    private ResponseEntity<ApiResponse> getAllMajor() {
+    public ResponseEntity<ApiResponse> getAllMajor() {
         List<Major> majors = majorService.getAllMajor();
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<ApiResponse> getMajorById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getMajorById(@PathVariable("id") Long id) {
         Major majors = majorService.getMajorById(id);
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
@@ -42,7 +42,7 @@ public class MajorController {
     }
 
     @PostMapping
-    private ResponseEntity<ApiResponse> insertMajor(@RequestBody Major major) {
+    public ResponseEntity<ApiResponse> insertMajor(@RequestBody Major major) {
         Major majors = majorService.insertMajor(major.getName());
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
@@ -53,7 +53,7 @@ public class MajorController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<ApiResponse> updateMajor(@PathVariable("id") Long id, @RequestBody Major major) {
+    public ResponseEntity<ApiResponse> updateMajor(@PathVariable("id") Long id, @RequestBody Major major) {
         Major majors = majorService.updateMajor(id, major.getName());
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
@@ -64,7 +64,7 @@ public class MajorController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<ApiResponse> disableMajor(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> disableMajor(@PathVariable("id") Long id) {
         boolean valid = majorService.disableMajor(id);
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), null);
         if (valid) {

@@ -33,7 +33,6 @@ public class MajorService {
         return majorRepository.findAllByIsDeletedFalse();
     }
 
-
     public Major getMajorById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findByIdAndIsDeletedFalse(id);
         if (optionalMajor.isPresent()) {
@@ -47,11 +46,8 @@ public class MajorService {
 
     public Major insertMajor(String name) {
         Major newMajor = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, major name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, major name can only filled by letters";
+        if (inputValidation(name) != "") {
+            responseMessage = inputValidation(name);
         } else {
             newMajor = new Major(utility.inputTrim(name));
             majorRepository.save(newMajor);
@@ -62,18 +58,13 @@ public class MajorService {
 
     public Major updateMajor(Long id, String name) {
         Major major = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, major name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, major name can only filled by letters";
-        } else {
-            if (getMajorById(id) != null) {
-                getMajorById(id).setName(utility.inputTrim(name));
-                major = getMajorById(id);
-                majorRepository.save(major);
-                responseMessage = "Data successfully updated!";
-            }
+        if (inputValidation(name) != "") {
+            responseMessage = inputValidation(name);
+        } else if (getMajorById(id) != null) {
+            getMajorById(id).setName(utility.inputTrim(name));
+            major = getMajorById(id);
+            majorRepository.save(major);
+            responseMessage = "Data successfully updated!";
         }
         return major;
     }
@@ -86,6 +77,18 @@ public class MajorService {
             majorRepository.save(major);
             result = true;
             responseMessage = "Data deactivated successfully!";
+        }
+        return result;
+    }
+
+    private String inputValidation(String name) {
+        String result = "";
+        if (utility.inputCheck(utility.inputTrim(name)) == 1) {
+            result = "Sorry, major name cannot be blank.";
+        } else if (utility.inputCheck(utility.inputTrim(name)) == 2) {
+            result = "Sorry, major name can only filled by letters";
+        } else {
+            // do nothing
         }
         return result;
     }

@@ -1,7 +1,6 @@
 package com.bootcamp.springbootuniversitywgs.controllers;
 
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
-import com.bootcamp.springbootuniversitywgs.models.Student;
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.services.StudentCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +23,14 @@ public class StudentCourseController {
     private StudentCourseService studentCourseService;
 
     @GetMapping
-    private ResponseEntity<ApiResponse> getAllStudentCourse() {
+    public ResponseEntity<ApiResponse> getAllStudentCourse() {
         List<StudentCourse> studentCourses = studentCourseService.getAllStudentCourse();
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<ApiResponse> getStudentCourseById(@PathVariable("id") Long id) {
+    public ResponseEntity<ApiResponse> getStudentCourseById(@PathVariable("id") Long id) {
         StudentCourse studentCourses = studentCourseService.getStudentCourseById(id);
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
@@ -42,7 +41,7 @@ public class StudentCourseController {
     }
 
     @PostMapping
-    private ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourse studentCourse) {
+    public ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourse studentCourse) {
         StudentCourse studentCourses = studentCourseService.insertStudentCourse(studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
@@ -52,14 +51,14 @@ public class StudentCourseController {
         }
     }
 
-//    @PutMapping("/{id}")
-//    private ResponseEntity<ApiResponse> updateStudentCourse(@PathVariable("id") Long id, @RequestBody Student student) {
-//        StudentCourse studentCourses = studentCourseService.updateStudent(id, student.getName(), student.getMajor().getId());
-//        ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
-//        if (studentCourses != null) {
-//            return ResponseEntity.status(HttpStatus.OK).body(response);
-//        } else {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//        }
-//    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse> updateStudentCourse(@PathVariable("id") Long id, @RequestBody StudentCourse studentCourse) {
+        StudentCourse studentCourses = studentCourseService.updateStudentCourse(id, studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
+        ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
+        if (studentCourses != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
 }

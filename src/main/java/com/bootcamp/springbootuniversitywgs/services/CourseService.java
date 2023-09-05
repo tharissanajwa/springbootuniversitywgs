@@ -47,11 +47,8 @@ public class CourseService {
 
     public Course insertCourse(String name) {
         Course newCourse = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, course name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, course name can only filled by letters";
+        if (inputValidation(name) != "") {
+            responseMessage = inputValidation(name);
         } else {
             newCourse = new Course(utility.inputTrim(name));
             courseRepository.save(newCourse);
@@ -62,18 +59,13 @@ public class CourseService {
 
     public Course updateCourse(Long id, String name) {
         Course course = null;
-        int inputCheck = utility.inputCheck(utility.inputTrim(name)); // Fungsinya sebagai validasi dari nama yg diinputkan pengguna
-        if (inputCheck == 1) {
-            responseMessage = "Sorry, course name cannot be blank.";
-        } else if (inputCheck == 2) {
-            responseMessage = "Sorry, course name can only filled by letters";
-        } else {
-            if (getCourseById(id) != null) {
-                getCourseById(id).setName(utility.inputTrim(name));
-                course = getCourseById(id);
-                courseRepository.save(course);
-                responseMessage = "Data successfully updated!";
-            }
+        if (inputValidation(name) != "") {
+            responseMessage = inputValidation(name);
+        } else if (getCourseById(id) != null) {
+            getCourseById(id).setName(utility.inputTrim(name));
+            course = getCourseById(id);
+            courseRepository.save(course);
+            responseMessage = "Data successfully updated!";
         }
         return course;
     }
@@ -86,6 +78,18 @@ public class CourseService {
             courseRepository.save(course);
             result = true;
             responseMessage = "Data deactivated successfully!";
+        }
+        return result;
+    }
+
+    private String inputValidation(String name) {
+        String result = "";
+        if (utility.inputContainsNumber(utility.inputTrim(name)) == 1) {
+            result = "Sorry, course name cannot be blank.";
+        } else if (utility.inputContainsNumber(utility.inputTrim(name)) == 2) {
+            result = "Sorry, course name can only filled by letters and numbers";
+        } else {
+            // do nothing
         }
         return result;
     }
