@@ -8,15 +8,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+// Ini adalah kelas Grade yang merepresentasikan data nilai ke database
 @Entity
 @Table(name = "grades")
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private Integer grade;
+    private Long id; // Id nilai dijadikan auto increment
+    private String name; // Nama tugas
+    private Integer grade; // Nilai
 
+    // Id student course sebagai relasi dengan model student course, dan memiliki hubungan banyak ke satu
     @ManyToOne
     @JoinColumn(name = "student_course_id")
     private StudentCourse studentCourse;
@@ -25,12 +27,14 @@ public class Grade {
         // Constructor default
     }
 
+    // Konstruktor untuk membuat objek tugas(nilai)
     public Grade(String name, Integer grade, StudentCourse studentCourse) {
         this.name = name;
         this.grade = grade;
         this.studentCourse = studentCourse;
     }
 
+    // Metode getter setter untuk field-field yg dibutuhkan
     public Long getId() {
         return id;
     }

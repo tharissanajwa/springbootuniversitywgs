@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait nilai
 @RestController
 @RequestMapping("/grades")
 public class GradeController {
     @Autowired
     private GradeService gradeService;
 
+    // Metode untuk mengambil semua data nilai dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllGrade() {
         List<Grade> grades = gradeService.getAllGrade();
@@ -29,6 +31,7 @@ public class GradeController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Metode untuk mengambil data nilai berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getGradeById(@PathVariable("id") Long id) {
         Grade grades = gradeService.getGradeById(id);
@@ -40,6 +43,7 @@ public class GradeController {
         }
     }
 
+    // Metode untuk membuat nilai baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertGrade(@RequestBody Grade grade) {
         Grade grades = gradeService.insertGrade(grade.getName(), grade.getGrade(), grade.getStudentCourse().getId());
@@ -51,6 +55,7 @@ public class GradeController {
         }
     }
 
+    // Metode untuk memperbarui informasi nilai dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateGrade(@PathVariable("id") Long id, @RequestBody Grade grade) {
         Grade grades = gradeService.updateGrade(id, grade.getName(), grade.getGrade(), grade.getStudentCourse().getId());

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+// Kelas ini bertanggung jawab untuk mengelola data nilai
 @Service
 public class GradeService {
     @Autowired
@@ -20,12 +21,14 @@ public class GradeService {
     @Autowired
     private Utility utility;
 
-    private String responseMessage;
+    private String responseMessage; // Pesan status untuk memberi informasi kepada pengguna
 
+    // Metode untuk mendapatkan pesan status
     public String getResponseMessage() {
         return responseMessage;
     }
 
+    // Metode untuk mendapatkan semua daftar nilai melalui repository
     public List<Grade> getAllGrade() {
         if (gradeRepository.findAll().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data grade.";
@@ -35,17 +38,18 @@ public class GradeService {
         return gradeRepository.findAll();
     }
 
+    // Metode untuk mendapatkan data nilai berdasarkan id melalui repository
     public Grade getGradeById(Long id) {
         Optional<Grade> optionalGrade = gradeRepository.findById(id);
         if (optionalGrade.isPresent()) {
             responseMessage = null;
             return optionalGrade.get();
-        } else {
-            responseMessage = "Sorry, id grade is not found.";
-            return null;
         }
+        responseMessage = "Sorry, id grade is not found.";
+        return null;
     }
 
+    // Metode untuk menambahkan nilai baru sesuai id student course ke dalam data melalui repository
     public Grade insertGrade(String name, Integer grade, Long studentCourseId) {
         Grade newGrade = null;
         if (inputValidation(name, grade, studentCourseId) != "") {
@@ -58,6 +62,7 @@ public class GradeService {
         return newGrade;
     }
 
+    // Metode untuk memperbarui informasi nilai melalui repository
     public Grade updateGrade(Long id, String name, Integer grade, Long studentCourseId) {
         Grade updateGrade = null;
         if (getGradeById(id) == null) {
@@ -75,6 +80,7 @@ public class GradeService {
         return updateGrade;
     }
 
+    // Metode untuk memvalidasi inputan pengguna dan id student course apakah ada atau tidak
     private String inputValidation(String name, Integer grade, Long studentCourseId) {
         String result = "";
         if (utility.inputContainsNumber(utility.inputTrim(name)) == 1) {
@@ -83,6 +89,8 @@ public class GradeService {
             result = "Sorry, assignment name can only filled by letters and numbers";
         } else if (utility.gradeCheck(grade) == 1) {
             result = "Sorry, the grades should be between 0-100";
+        } else if (studentCourseId == null) {
+            result = "Sorry, id student course is required!";
         } else if (studentCourseService.getStudentCourseById(studentCourseId) == null) {
             result = "Sorry, id student course is not found!";
         } else {
