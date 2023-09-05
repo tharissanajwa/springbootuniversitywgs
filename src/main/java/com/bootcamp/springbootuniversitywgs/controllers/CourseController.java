@@ -16,12 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+// Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait mata kuliah
 @RestController
 @RequestMapping("/courses")
 public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    // Metode untuk mengambil semua data matkul dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllCourse() {
         List<Course> courses = courseService.getAllCourse();
@@ -29,6 +32,7 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Metode untuk mengambil data matkul berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getCourseById(@PathVariable("id") Long id) {
         Course courses = courseService.getCourseById(id);
@@ -40,6 +44,7 @@ public class CourseController {
         }
     }
 
+    // Metode untuk membuat matkul baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertCourse(@RequestBody Course course) {
         Course courses = courseService.insertCourse(course.getName());
@@ -51,6 +56,7 @@ public class CourseController {
         }
     }
 
+    // Metode untuk memperbarui informasi matkul dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateCourse(@PathVariable("id") Long id, @RequestBody Course course) {
         Course courses = courseService.updateCourse(id, course.getName());
@@ -62,6 +68,7 @@ public class CourseController {
         }
     }
 
+    // Metode untuk menghapus matkul berdasarkan dari fungsi yg telah dibuat di service
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> disableCourse(@PathVariable("id") Long id) {
         boolean valid = courseService.disableCourse(id);

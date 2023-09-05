@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+// Kelas ini bertanggung jawab untuk mengelola data matkul
 @Service
 public class CourseService {
     @Autowired
@@ -24,6 +25,7 @@ public class CourseService {
         return responseMessage;
     }
 
+    // Metode untuk mendapatkan semua daftar matkul yang belum terhapus melalui repository
     public List<Course> getAllCourse() {
         if (courseRepository.findAllByIsDeletedFalse().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data course.";
@@ -33,18 +35,18 @@ public class CourseService {
         return courseRepository.findAllByIsDeletedFalse();
     }
 
-
+    // Metode untuk mendapatkan data matkul berdasarkan id melalui repository
     public Course getCourseById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findByIdAndIsDeletedFalse(id);
         if (optionalCourse.isPresent()) {
             responseMessage = null;
             return optionalCourse.get();
-        } else {
-            responseMessage = "Sorry, id course is not found.";
-            return null;
         }
+        responseMessage = "Sorry, id course is not found.";
+        return null;
     }
 
+    // Metode untuk menambahkan matkul baru ke dalam data melalui repository
     public Course insertCourse(String name) {
         Course newCourse = null;
         if (inputValidation(name) != "") {
@@ -57,6 +59,7 @@ public class CourseService {
         return newCourse;
     }
 
+    // Metode untuk memperbarui informasi matkul melalui repository
     public Course updateCourse(Long id, String name) {
         Course course = null;
         if (inputValidation(name) != "") {
@@ -70,6 +73,7 @@ public class CourseService {
         return course;
     }
 
+    // Metode untuk menghapus data matkul secara soft delete melalui repository
     public boolean disableCourse(Long id) {
         boolean result = false;
         if (getCourseById(id) != null) {
@@ -82,6 +86,7 @@ public class CourseService {
         return result;
     }
 
+    // Metode untuk memvalidasi inputan pengguna
     private String inputValidation(String name) {
         String result = "";
         if (utility.inputContainsNumber(utility.inputTrim(name)) == 1) {
