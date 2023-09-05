@@ -11,17 +11,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+// Ini adalah kelas Major yang merepresentasikan data jurusan universitas ke database
 @Entity
 @Table(name = "majors")
 public class Major {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
-    private String name;
+    private Long id; // Id jurusan dijadikan auto increment
+    private String name; // Nama jurusan
     @Column(columnDefinition = "boolean default false")
-    private boolean isDeleted;
+    private boolean isDeleted; // Status jurusan
 
-    @JsonIgnore
+    @JsonIgnore // Json ignore fungsinya untuk menghentikan infinity loop
+    // Hubungan satu-ke-banyak dengan kelas Student, dan di-mapped oleh properti 'major' dalam student
     @OneToMany(mappedBy = "major")
     private List<Student> students;
 
@@ -29,10 +31,12 @@ public class Major {
         // Konstruktor default
     }
 
+    // Konstruktor untuk membuat objek jurusan
     public Major(String name) {
         this.name = name;
     }
 
+    // Metode getter setter untuk field-field yg dibutuhkan
     public Long getId() {
         return id;
     }

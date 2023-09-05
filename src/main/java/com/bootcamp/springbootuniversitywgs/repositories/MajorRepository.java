@@ -7,6 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MajorRepository extends JpaRepository<Major, Long> {
+    // Mengambil daftar semua jurusan yang tidak dihapus
     List<Major> findAllByIsDeletedFalse();
+    // Mengambil jurusan berdasarkan ID yang tidak dihapus (jika ada)
     Optional<Major> findByIdAndIsDeletedFalse(Long id);
 }
+
+
+
+
+
+

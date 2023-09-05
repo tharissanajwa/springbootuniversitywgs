@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait jurusan
 @RestController
 @RequestMapping("/majors")
 public class MajorController {
     @Autowired
     private MajorService majorService;
 
+    // Metode untuk mengambil semua data jurusan dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllMajor() {
         List<Major> majors = majorService.getAllMajor();
@@ -30,6 +32,7 @@ public class MajorController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Metode untuk mengambil data jurusan berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getMajorById(@PathVariable("id") Long id) {
         Major majors = majorService.getMajorById(id);
@@ -41,6 +44,7 @@ public class MajorController {
         }
     }
 
+    // Metode untuk membuat jurusan baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertMajor(@RequestBody Major major) {
         Major majors = majorService.insertMajor(major.getName());
@@ -52,6 +56,7 @@ public class MajorController {
         }
     }
 
+    // Metode untuk memperbarui informasi jurusan dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateMajor(@PathVariable("id") Long id, @RequestBody Major major) {
         Major majors = majorService.updateMajor(id, major.getName());
@@ -63,6 +68,7 @@ public class MajorController {
         }
     }
 
+    // Metode untuk menghapus jurusan berdasarkan id dari fungsi yg telah dibuat di service
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> disableMajor(@PathVariable("id") Long id) {
         boolean valid = majorService.disableMajor(id);

@@ -24,6 +24,7 @@ public class MajorService {
         return responseMessage;
     }
 
+    // Metode untuk mendapatkan semua daftar jurusan yang belum terhapus melalui repository
     public List<Major> getAllMajor() {
         if (majorRepository.findAllByIsDeletedFalse().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data major.";
@@ -33,17 +34,18 @@ public class MajorService {
         return majorRepository.findAllByIsDeletedFalse();
     }
 
+    // Metode untuk mendapatkan data jurusan berdasarkan id melalui repository
     public Major getMajorById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findByIdAndIsDeletedFalse(id);
         if (optionalMajor.isPresent()) {
             responseMessage = null;
             return optionalMajor.get();
-        } else {
-            responseMessage = "Sorry, id major is not found.";
-            return null;
         }
+        responseMessage = "Sorry, id major is not found.";
+        return null;
     }
 
+    // Metode untuk menambahkan jurusan baru ke dalam data melalui repository
     public Major insertMajor(String name) {
         Major newMajor = null;
         if (inputValidation(name) != "") {
@@ -56,6 +58,7 @@ public class MajorService {
         return newMajor;
     }
 
+    // Metode untuk memperbarui informasi jurusan melalui repository
     public Major updateMajor(Long id, String name) {
         Major major = null;
         if (inputValidation(name) != "") {
@@ -69,6 +72,7 @@ public class MajorService {
         return major;
     }
 
+    // Metode untuk menghapus data jurusan secara soft delete melalui repository
     public boolean disableMajor(Long id) {
         boolean result = false;
         if (getMajorById(id) != null) {
@@ -81,6 +85,7 @@ public class MajorService {
         return result;
     }
 
+    // Metode untuk memvalidasi inputan pengguna
     private String inputValidation(String name) {
         String result = "";
         if (utility.inputCheck(utility.inputTrim(name)) == 1) {
