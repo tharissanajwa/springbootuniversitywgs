@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait mahasiswa memilih matkul
 @RestController
 @RequestMapping("/student-courses")
 public class StudentCourseController {
     @Autowired
     private StudentCourseService studentCourseService;
 
+    // Metode untuk mengambil semua data mahasiswa memilih matkul dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllStudentCourse() {
         List<StudentCourse> studentCourses = studentCourseService.getAllStudentCourse();
@@ -29,6 +31,7 @@ public class StudentCourseController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Metode untuk mengambil data mahasiswa memilih matkul berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getStudentCourseById(@PathVariable("id") Long id) {
         StudentCourse studentCourses = studentCourseService.getStudentCourseById(id);
@@ -40,6 +43,7 @@ public class StudentCourseController {
         }
     }
 
+    // Metode untuk membuat data mahasiswa memilih matkul baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourse studentCourse) {
         StudentCourse studentCourses = studentCourseService.insertStudentCourse(studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
@@ -51,6 +55,7 @@ public class StudentCourseController {
         }
     }
 
+    // Metode untuk memperbarui informasi mahasiswa memilih dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateStudentCourse(@PathVariable("id") Long id, @RequestBody StudentCourse studentCourse) {
         StudentCourse studentCourses = studentCourseService.updateStudentCourse(id, studentCourse.getStudent().getId(), studentCourse.getCourse().getId());

@@ -2,13 +2,13 @@ package com.bootcamp.springbootuniversitywgs.services;
 
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentCourseRepository;
-import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
+// Kelas ini bertanggung jawab untuk mengelola data mahasiswa memilih matkul
 @Service
 public class StudentCourseService {
     @Autowired
@@ -27,6 +27,7 @@ public class StudentCourseService {
         return responseMessage;
     }
 
+    // Metode untuk mendapatkan semua daftar mahasiswa memilih matkul melalui repository
     public List<StudentCourse> getAllStudentCourse() {
         if (studentCourseRepository.findAll().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student course.";
@@ -36,17 +37,18 @@ public class StudentCourseService {
         return studentCourseRepository.findAll();
     }
 
+    // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id melalui repository
     public StudentCourse getStudentCourseById(Long id) {
         Optional<StudentCourse> optionalStudentCourse = studentCourseRepository.findById(id);
         if (optionalStudentCourse.isPresent()) {
             responseMessage = null;
             return optionalStudentCourse.get();
-        } else {
-            responseMessage = "Sorry, id student course is not found.";
-            return null;
         }
+        responseMessage = "Sorry, id student course is not found.";
+        return null;
     }
 
+    // Metode untuk menambahkan data mahasiswa memilih matkul baru ke database melalui repository
     public StudentCourse insertStudentCourse(Long studentId, Long courseId) {
         StudentCourse newStudentCourse = null;
         if (inputValidation(studentId, courseId) != "") {
@@ -56,10 +58,10 @@ public class StudentCourseService {
             studentCourseRepository.save(newStudentCourse);
             responseMessage = "Data successfully added!";
         }
-
         return newStudentCourse;
     }
 
+    // Metode untuk memperbarui informasi mahasiswa memilih matkul melalui repository
     public StudentCourse updateStudentCourse(Long id, Long studentId, Long courseId) {
         StudentCourse studentCourse = null;
         if (getStudentCourseById(id) == null) {
@@ -76,9 +78,14 @@ public class StudentCourseService {
         return studentCourse;
     }
 
+    // Metode untuk memvalidasi apakah id student dan id course ada dalam data
     private String inputValidation(Long studentId, Long courseId) {
         String result = "";
-        if (studentService.getStudentById(studentId) == null) {
+        if (studentId == null) {
+            result = "Sorry, id student is required!";
+        } else if (courseId == null) {
+            result = "Sorry, id course is required!";
+        } else if (studentService.getStudentById(studentId) == null) {
             result = "Sorry, id student is not found!";
         } else if (courseService.getCourseById(courseId) == null) {
             result = "Sorry, id course is not found!";
