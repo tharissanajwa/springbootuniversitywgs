@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+// Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait mahasiswa
 @RestController
 @RequestMapping("/students")
 public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    // Metode untuk mengambil semua data mahasiswa dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllStudent() {
         List<Student> students = studentService.getAllStudent();
@@ -30,6 +32,7 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    // Metode untuk mengambil data mahasiswa berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getStudentById(@PathVariable("id") Long id) {
         Student students = studentService.getStudentById(id);
@@ -41,6 +44,7 @@ public class StudentController {
         }
     }
 
+    // Metode untuk membuat mahasiswa baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertStudent(@RequestBody Student student) {
         Student students = studentService.insertStudent(student.getName(), student.getMajor().getId());
@@ -52,6 +56,7 @@ public class StudentController {
         }
     }
 
+    // Metode untuk memperbarui informasi mahasiswa dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
         Student students = studentService.updateStudent(id, student.getName(), student.getMajor().getId());
@@ -63,6 +68,7 @@ public class StudentController {
         }
     }
 
+    // Metode untuk menghapus mahasiswa berdasarkan id dari fungsi yg telah dibuat di service
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse> disableStudent(@PathVariable("id") Long id) {
         boolean valid = studentService.disableStudent(id);

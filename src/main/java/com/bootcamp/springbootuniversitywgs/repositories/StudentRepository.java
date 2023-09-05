@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
+    // Mengambil daftar semua mahasiswa yang tidak dihapus
     List<Student> findAllByIsDeletedFalse();
+    // Mengambil matkul berdasarkan ID yang tidak dihapus (jika ada)
     Optional<Student> findByIdAndIsDeletedFalse(Long id);
-
 }
