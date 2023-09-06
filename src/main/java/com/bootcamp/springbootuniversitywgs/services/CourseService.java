@@ -30,7 +30,7 @@ public class CourseService {
         if (courseRepository.findAllByIsDeletedFalse().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data course.";
         } else {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
         }
         return courseRepository.findAllByIsDeletedFalse();
     }
@@ -39,7 +39,7 @@ public class CourseService {
     public Course getCourseById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findByIdAndIsDeletedFalse(id);
         if (optionalCourse.isPresent()) {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
             return optionalCourse.get();
         }
         responseMessage = "Sorry, id course is not found.";

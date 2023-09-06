@@ -29,7 +29,7 @@ public class MajorService {
         if (majorRepository.findAllByIsDeletedFalse().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data major.";
         } else {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
         }
         return majorRepository.findAllByIsDeletedFalse();
     }
@@ -38,7 +38,7 @@ public class MajorService {
     public Major getMajorById(Long id) {
         Optional<Major> optionalMajor = majorRepository.findByIdAndIsDeletedFalse(id);
         if (optionalMajor.isPresent()) {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
             return optionalMajor.get();
         }
         responseMessage = "Sorry, id major is not found.";

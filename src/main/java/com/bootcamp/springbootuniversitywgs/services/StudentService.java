@@ -33,7 +33,7 @@ public class StudentService {
         if (studentRepository.findAllByIsDeletedFalse().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student.";
         } else {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
         }
         return studentRepository.findAllByIsDeletedFalse();
     }
@@ -42,7 +42,7 @@ public class StudentService {
     public Student getStudentById(Long id) {
         Optional<Student> optionalStudent = studentRepository.findByIdAndIsDeletedFalse(id);
         if (optionalStudent.isPresent()) {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
             return optionalStudent.get();
         }
         responseMessage = "Sorry, id student is not found.";
