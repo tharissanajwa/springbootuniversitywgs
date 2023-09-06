@@ -33,14 +33,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/courses/4",
+							"raw": "localhost:8080/courses/2",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"courses",
-								"4"
+								"2"
 							]
 						}
 					},
@@ -111,14 +111,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/courses/2",
+							"raw": "localhost:8080/courses/10",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"courses",
-								"2"
+								"10"
 							]
 						}
 					},
@@ -173,7 +173,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"  Abidzar  Putra     \",\n    \"major\": {\n        \"id\": 5\n    }\n}",
+							"raw": "{\n    \"name\": \"  Abidzar  Putra     \",\n    \"major\": {\n        \"id\": 8\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -223,7 +223,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"   Kayla   Alzena   \",\n    \"major\": {\n        \"id\": 2\n    }\n}",
+							"raw": "{\n    \"name\": null,\n    \"major\": {\n        \"id\": 8\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -273,13 +273,33 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/student-courses/2",
+							"raw": "localhost:8080/student-courses/3",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"student-courses",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Student Course By Student Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/student-courses/students/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"student-courses",
+								"students",
 								"2"
 							]
 						}
@@ -293,7 +313,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"student\": {\n        \"id\": 2\n    },\n    \"course\": {\n        \"id\": 7\n    }\n}",
+							"raw": "{\n    \"student\": {\n        \"id\": 7\n    },\n    \"course\": {\n        \"id\": 1\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -320,7 +340,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"student\": {\n        \"id\": 2\n    },\n    \"course\": {\n        \"id\": 2\n    }\n}",
+							"raw": "{\n    \"student\": {\n        \"id\": 2\n    },\n    \"course\": {\n        \"id\": 5\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -328,14 +348,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/student-courses/3",
+							"raw": "localhost:8080/student-courses/5",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"student-courses",
-								"3"
+								"5"
 							]
 						}
 					},
@@ -348,9 +368,16 @@
 			"item": [
 				{
 					"name": "Get All Grade",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
 						"url": {
 							"raw": "localhost:8080/grades",
 							"host": [
@@ -384,13 +411,40 @@
 					"response": []
 				},
 				{
+					"name": "Get Grade By Student Course Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/grades/student-courses/6",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"grades",
+								"student-courses",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Create New Grade",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\" : \"Tugas 1\",\n    \"grade\" : 75,\n    \"studentCourse\": {\n        \"id\": 4\n    }\n}",
+							"raw": "{\n    \"name\" : \"Tugas 3\",\n    \"grade\" : 75,\n    \"studentCourse\": {\n        \"id\": 6\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -417,7 +471,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\" : \"Tugas 1\",\n    \"grade\" : 95,\n    \"studentCourse\": {\n        \"id\": 3\n    }\n}",
+							"raw": "{\n    \"name\" : \"Tugas 3\",\n    \"grade\" : 90,\n    \"studentCourse\": {\n        \"id\": 4\n    }\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -425,14 +479,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/grades/3",
+							"raw": "localhost:8080/grades/6",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"grades",
-								"3"
+								"6"
 							]
 						}
 					},
@@ -467,14 +521,14 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8080/majors/4",
+							"raw": "localhost:8080/majors/2",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"majors",
-								"4"
+								"2"
 							]
 						}
 					},
@@ -506,7 +560,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"   Rekayasa   Perangkat   Lunak  \"\n}",
+							"raw": "{\n    \"name\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -541,14 +595,14 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/majors/7",
+							"raw": "localhost:8080/majors/8",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"majors",
-								"7"
+								"8"
 							]
 						}
 					},
