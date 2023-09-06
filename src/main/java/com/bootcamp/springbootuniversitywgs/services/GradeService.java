@@ -56,7 +56,7 @@ public class GradeService {
             responseMessage = "Data successfully displayed.";
             return grades;
         }
-        responseMessage = "Sorry, id student course is not found.";
+        responseMessage = "Sorry, student course not found.";
         return null;
     }
 
