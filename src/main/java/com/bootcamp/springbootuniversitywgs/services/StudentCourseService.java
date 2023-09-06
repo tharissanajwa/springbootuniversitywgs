@@ -55,7 +55,7 @@ public class StudentCourseService {
             responseMessage = "Data successfully displayed.";
             return studentCourses;
         }
-        responseMessage = "Sorry, id student is not found.";
+        responseMessage = "Sorry, student not found";
         return null;
     }
 
