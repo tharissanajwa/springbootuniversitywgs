@@ -32,7 +32,7 @@ public class StudentCourseService {
         if (studentCourseRepository.findAll().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student course.";
         } else {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
         }
         return studentCourseRepository.findAll();
     }
@@ -41,7 +41,7 @@ public class StudentCourseService {
     public StudentCourse getStudentCourseById(Long id) {
         Optional<StudentCourse> optionalStudentCourse = studentCourseRepository.findById(id);
         if (optionalStudentCourse.isPresent()) {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
             return optionalStudentCourse.get();
         }
         responseMessage = "Sorry, id student course is not found.";
@@ -53,6 +53,8 @@ public class StudentCourseService {
         StudentCourse newStudentCourse = null;
         if (inputValidation(studentId, courseId) != "") {
             responseMessage = inputValidation(studentId, courseId);
+        } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
+            responseMessage = "Data already exists!";
         } else {
             newStudentCourse = new StudentCourse(studentService.getStudentById(studentId), courseService.getCourseById(courseId));
             studentCourseRepository.save(newStudentCourse);
