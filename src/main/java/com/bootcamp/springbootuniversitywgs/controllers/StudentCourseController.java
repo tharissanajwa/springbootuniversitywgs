@@ -43,6 +43,18 @@ public class StudentCourseController {
         }
     }
 
+    // Metode untuk mengambil data mahasiswa memilih matkul berdasarkan id mahasiswa dari fungsi yg telah dibuat di service
+    @GetMapping("/students/{student}")
+    public ResponseEntity<ApiResponse> getStudentCourseByStudentId(@PathVariable("student") Long studentId) {
+        List<StudentCourse> studentCourses = studentCourseService.getStudentCourseByStudentId(studentId);
+        ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
+        if (studentCourses != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     // Metode untuk membuat data mahasiswa memilih matkul baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourse studentCourse) {

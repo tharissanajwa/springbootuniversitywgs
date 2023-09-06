@@ -48,6 +48,17 @@ public class StudentCourseService {
         return null;
     }
 
+    // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id mahasiswa melalui repository
+    public List<StudentCourse> getStudentCourseByStudentId(Long studentId) {
+        List<StudentCourse> studentCourses = studentCourseRepository.findByStudentId(studentId);
+        if (!studentCourses.isEmpty()) {
+            responseMessage = "Data successfully displayed.";
+            return studentCourses;
+        }
+        responseMessage = "Sorry, id student is not found.";
+        return null;
+    }
+
     // Metode untuk menambahkan data mahasiswa memilih matkul baru ke database melalui repository
     public StudentCourse insertStudentCourse(Long studentId, Long courseId) {
         StudentCourse newStudentCourse = null;
