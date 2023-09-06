@@ -33,7 +33,7 @@ public class GradeService {
         if (gradeRepository.findAll().isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data grade.";
         } else {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
         }
         return gradeRepository.findAll();
     }
@@ -42,7 +42,7 @@ public class GradeService {
     public Grade getGradeById(Long id) {
         Optional<Grade> optionalGrade = gradeRepository.findById(id);
         if (optionalGrade.isPresent()) {
-            responseMessage = null;
+            responseMessage = "Data successfully displayed.";
             return optionalGrade.get();
         }
         responseMessage = "Sorry, id grade is not found.";
@@ -54,6 +54,8 @@ public class GradeService {
         Grade newGrade = null;
         if (inputValidation(name, grade, studentCourseId) != "") {
             responseMessage = inputValidation(name, grade, studentCourseId);
+        } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
+            responseMessage = "Data already exists!";
         } else {
             newGrade = new Grade(utility.inputTrim(name), grade, studentCourseService.getStudentCourseById(studentCourseId));
             gradeRepository.save(newGrade);
