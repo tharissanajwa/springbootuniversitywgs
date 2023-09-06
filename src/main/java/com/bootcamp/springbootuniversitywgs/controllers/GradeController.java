@@ -43,6 +43,18 @@ public class GradeController {
         }
     }
 
+    // Metode untuk mengambil data nilai berdasarkan id student course dari fungsi yg telah dibuat di service
+    @GetMapping("/student-courses/{studentCourse}")
+    public ResponseEntity<ApiResponse> getGradeByStudentCourseId(@PathVariable("studentCourse") Long studentCourseId) {
+        List<Grade> grades = gradeService.getGradeByStudentCourseId(studentCourseId);
+        ApiResponse response = new ApiResponse(gradeService.getResponseMessage(), grades);
+        if (grades != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
+    }
+
     // Metode untuk membuat nilai baru dari fungsi yg telah dibuat di service
     @PostMapping
     public ResponseEntity<ApiResponse> insertGrade(@RequestBody Grade grade) {

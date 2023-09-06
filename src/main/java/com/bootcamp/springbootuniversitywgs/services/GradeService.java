@@ -49,6 +49,17 @@ public class GradeService {
         return null;
     }
 
+    // Metode untuk mendapatkan data nilai berdasarkan id student course melalui repository
+    public List<Grade> getGradeByStudentCourseId(Long studentCourseId) {
+        List<Grade> grades = gradeRepository.findByStudentCourseId(studentCourseId);
+        if (!grades.isEmpty()) {
+            responseMessage = "Data successfully displayed.";
+            return grades;
+        }
+        responseMessage = "Sorry, id grade is not found.";
+        return null;
+    }
+
     // Metode untuk menambahkan nilai baru sesuai id student course ke dalam data melalui repository
     public Grade insertGrade(String name, Integer grade, Long studentCourseId) {
         Grade newGrade = null;
