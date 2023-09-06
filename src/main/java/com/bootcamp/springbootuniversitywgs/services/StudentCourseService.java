@@ -81,6 +81,8 @@ public class StudentCourseService {
             responseMessage = "Sorry, id student course is not found.";
         } else if (inputValidation(studentId, courseId) != "") {
             responseMessage = inputValidation(studentId, courseId);
+        } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
+            responseMessage = "Data already exists!";
         } else {
             getStudentCourseById(id).setStudent(studentService.getStudentById(studentId));
             getStudentCourseById(id).setCourse(courseService.getCourseById(courseId));
