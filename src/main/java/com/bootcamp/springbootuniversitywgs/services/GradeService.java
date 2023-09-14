@@ -82,6 +82,8 @@ public class GradeService {
             responseMessage = "Sorry, id grade is not found!";
         } else if (inputValidation(name, grade, studentCourseId) != "") {
             responseMessage = inputValidation(name, grade, studentCourseId);
+        } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
+            responseMessage = "Data already exists!";
         } else {
             getGradeById(id).setName(utility.inputTrim(name));
             getGradeById(id).setGrade(grade);
