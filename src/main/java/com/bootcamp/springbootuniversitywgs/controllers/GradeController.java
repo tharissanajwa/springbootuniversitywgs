@@ -36,7 +36,7 @@ public class GradeController {
     // Metode untuk mengambil data nilai berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getGradeById(@PathVariable("id") Long id) {
-        Grade grades = gradeService.getGradeById(id);
+        GradeResponse grades = gradeService.getGradeByIdResponse(id);
         ApiResponse response = new ApiResponse(gradeService.getResponseMessage(), grades);
         if (grades != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);

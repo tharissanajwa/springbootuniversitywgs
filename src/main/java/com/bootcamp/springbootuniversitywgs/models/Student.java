@@ -14,11 +14,9 @@ import java.util.List;
 @Table(name = "students")
 public class Student extends BaseModel {
     private String name;
-
     @ManyToOne
     @JoinColumn(name = "major_id", referencedColumnName = "id")
     private Major major;
-
     @JsonIgnore
     @OneToMany(mappedBy = "student")
     private List<StudentCourse> studentCourses;

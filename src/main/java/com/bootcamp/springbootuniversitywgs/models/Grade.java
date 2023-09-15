@@ -11,20 +11,12 @@ import javax.persistence.Table;
 public class Grade extends BaseModel {
     private String name;
     private Integer grade;
-
     @ManyToOne
     @JoinColumn(name = "student_course_id")
     private StudentCourse studentCourse;
 
     public Grade() {
         // Constructor default
-    }
-
-    // Konstruktor untuk membuat objek tugas(nilai)
-    public Grade(String name, Integer grade, StudentCourse studentCourse) {
-        this.name = name;
-        this.grade = grade;
-        this.studentCourse = studentCourse;
     }
 
     public String getName() {

@@ -12,7 +12,6 @@ import java.util.List;
 @Table(name = "courses")
 public class Course extends BaseModel {
     private String name;
-
     @JsonIgnore
     @OneToMany(mappedBy = "course")
     private List<StudentCourse> studentCourses;
