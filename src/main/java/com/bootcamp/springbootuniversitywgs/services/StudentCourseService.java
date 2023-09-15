@@ -5,6 +5,10 @@ import com.bootcamp.springbootuniversitywgs.dto.responses.StudentCourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentCourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -31,19 +35,20 @@ public class StudentCourseService {
     }
 
     // Metode untuk mendapatkan semua daftar mahasiswa memilih matkul melalui repository
-    public List<StudentCourseResponse> getAllStudentCourse() {
-        List<StudentCourse> result = studentCourseRepository.findAll();
+    public Page<StudentCourseResponse> getAllStudentCourse(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<StudentCourse> result = studentCourseRepository.findAll(pageable);
         List<StudentCourseResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student course.";
         } else {
-            for (StudentCourse studentCourse : result) {
+            for (StudentCourse studentCourse : result.getContent()) {
                 StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
                 responses.add(studentCourseResponse);
             }
             responseMessage = "Data successfully displayed.";
         }
-        return responses;
+        return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
 
     // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id melalui repository
@@ -68,16 +73,17 @@ public class StudentCourseService {
     }
 
     // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id mahasiswa melalui repository
-    public List<StudentCourseResponse> getStudentCourseByStudentId(Long studentId) {
-        List<StudentCourse> studentCourses = studentCourseRepository.findByStudentIdOrderByStudentId(studentId);
+    public Page<StudentCourseResponse> getStudentCourseByStudentId(int page, int limit, Long studentId) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<StudentCourse> studentCourses = studentCourseRepository.findByStudentIdOrderByStudentId(pageable, studentId);
         List<StudentCourseResponse> responses = new ArrayList<>();
         if (!studentCourses.isEmpty()) {
-            for (StudentCourse studentCourse : studentCourses) {
+            for (StudentCourse studentCourse : studentCourses.getContent()) {
                 StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
                 responses.add(studentCourseResponse);
             }
             responseMessage = "Data successfully displayed.";
-            return responses;
+            return new PageImpl<>(responses, PageRequest.of(page, limit), studentCourses.getTotalElements());
         }
         responseMessage = "Sorry, student not found";
         return null;
