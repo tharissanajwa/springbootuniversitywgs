@@ -6,6 +6,10 @@ import com.bootcamp.springbootuniversitywgs.models.Major;
 import com.bootcamp.springbootuniversitywgs.repositories.MajorRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,19 +33,20 @@ public class MajorService {
     }
 
     // Metode untuk mendapatkan semua daftar jurusan yang belum terhapus melalui repository
-    public List<MajorResponse> getAllMajor() {
-        List<Major> result = majorRepository.findAllByDeletedAtIsNullOrderByName();
+    public Page<MajorResponse> getAllMajor(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Major> result = majorRepository.findAllByDeletedAtIsNullOrderByName(pageable);
         List<MajorResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data major.";
         } else {
-            for (Major major : result) {
+            for (Major major : result.getContent()) {
                 MajorResponse majorResponse = new MajorResponse(major);
                 responses.add(majorResponse);
             }
             responseMessage = "Data successfully displayed.";
         }
-        return responses;
+        return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
 
     // Metode untuk mendapatkan data jurusan berdasarkan id melalui repository
@@ -100,9 +105,9 @@ public class MajorService {
     // Metode untuk menghapus data jurusan secara soft delete melalui repository
     public boolean disableMajor(Long id) {
         boolean result = false;
-        if (getMajorById(id) != null) {
-            getMajorById(id).setDeletedAt(new Date());
-            Major major = getMajorById(id);
+        Major major = getMajorById(id);
+        if (major != null) {
+            major.setDeletedAt(new Date());
             majorRepository.save(major);
             result = true;
             responseMessage = "Data deactivated successfully!";
