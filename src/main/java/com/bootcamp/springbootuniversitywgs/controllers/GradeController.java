@@ -6,6 +6,7 @@ import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
 import com.bootcamp.springbootuniversitywgs.models.Grade;
 import com.bootcamp.springbootuniversitywgs.services.GradeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 // Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait nilai
 @RestController
@@ -27,8 +27,8 @@ public class GradeController {
 
     // Metode untuk mengambil semua data nilai dari fungsi yg telah dibuat di service
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllGrade() {
-        List<GradeResponse> grades = gradeService.getAllGrade();
+    public ResponseEntity<ApiResponse> getAllGrade(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        Page<GradeResponse> grades = gradeService.getAllGrade(page, limit);
         ApiResponse response = new ApiResponse(gradeService.getResponseMessage(), grades);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -47,8 +47,8 @@ public class GradeController {
 
     // Metode untuk mengambil data nilai berdasarkan id student course dari fungsi yg telah dibuat di service
     @GetMapping("/student-courses/{studentCourse}")
-    public ResponseEntity<ApiResponse> getGradeByStudentCourseId(@PathVariable("studentCourse") Long studentCourseId) {
-        List<GradeResponse> grades = gradeService.getGradeByStudentCourseId(studentCourseId);
+    public ResponseEntity<ApiResponse> getGradeByStudentCourseId(@RequestParam("page") int page, @RequestParam("limit") int limit, @PathVariable("studentCourse") Long studentCourseId) {
+        Page<GradeResponse> grades = gradeService.getGradeByStudentCourseId(page, limit, studentCourseId);
         ApiResponse response = new ApiResponse(gradeService.getResponseMessage(), grades);
         if (grades != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);

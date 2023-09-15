@@ -6,6 +6,10 @@ import com.bootcamp.springbootuniversitywgs.models.Grade;
 import com.bootcamp.springbootuniversitywgs.repositories.GradeRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,8 +36,9 @@ public class GradeService {
     }
 
     // Metode untuk mendapatkan semua daftar nilai melalui repository
-    public List<GradeResponse> getAllGrade() {
-        List<Grade> result = gradeRepository.findAll();
+    public Page<GradeResponse> getAllGrade(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Grade> result = gradeRepository.findAll(pageable);
         List<GradeResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data grade.";
@@ -44,7 +49,7 @@ public class GradeService {
             }
             responseMessage = "Data successfully displayed.";
         }
-        return responses;
+        return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
 
     // Metode untuk mendapatkan data nilai berdasarkan id melalui repository
@@ -69,16 +74,17 @@ public class GradeService {
     }
 
     // Metode untuk mendapatkan data nilai berdasarkan id student course melalui repository
-    public List<GradeResponse> getGradeByStudentCourseId(Long studentCourseId) {
-        List<Grade> grades = gradeRepository.findByStudentCourseIdOrderByName(studentCourseId);
+    public Page<GradeResponse> getGradeByStudentCourseId(int page, int limit, Long studentCourseId) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Grade> grades = gradeRepository.findByStudentCourseIdOrderByName(pageable, studentCourseId);
         List<GradeResponse> responses = new ArrayList<>();
         if (!grades.isEmpty()) {
-            for (Grade grade : grades) {
+            for (Grade grade : grades.getContent()) {
                 GradeResponse gradeResponse = new GradeResponse(grade);
                 responses.add(gradeResponse);
             }
             responseMessage = "Data successfully displayed.";
-            return responses;
+            return new PageImpl<>(responses, PageRequest.of(page, limit), grades.getTotalElements());
         }
         responseMessage = "Sorry, student course not found.";
         return null;
