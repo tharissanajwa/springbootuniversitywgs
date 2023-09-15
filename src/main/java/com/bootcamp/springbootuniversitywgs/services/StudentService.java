@@ -6,6 +6,10 @@ import com.bootcamp.springbootuniversitywgs.models.Student;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,19 +37,20 @@ public class StudentService {
     }
 
     // Metode untuk mendapatkan semua daftar mahasiswa yang belum terhapus melalui repository
-    public List<StudentResponse> getAllStudent() {
-        List<Student> result = studentRepository.findAllByDeletedAtIsNullOrderByName();
+    public Page<StudentResponse> getAllStudent(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Student> result = studentRepository.findAllByDeletedAtIsNullOrderByName(pageable);
         List<StudentResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student.";
         } else {
-            for (Student student : result) {
+            for (Student student : result.getContent()) {
                 StudentResponse studentResponse = new StudentResponse(student);
                 responses.add(studentResponse);
             }
             responseMessage = "Data successfully displayed.";
         }
-        return responses;
+        return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
 
     // Metode untuk mendapatkan data mahasiswa berdasarkan id melalui repository
@@ -108,9 +113,9 @@ public class StudentService {
     // Metode untuk menghapus data mahasiswa secara soft delete melalui repository
     public boolean disableStudent(Long id) {
         boolean result = false;
-        if (getStudentById(id) != null) {
-            getStudentById(id).setDeletedAt(new Date());
-            Student student = getStudentById(id);
+        Student student = getStudentById(id);
+        if (student != null) {
+            student.setDeletedAt(new Date());
             studentRepository.save(student);
             result = true;
             responseMessage = "Data deactivated successfully!";

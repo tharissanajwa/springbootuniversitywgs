@@ -3,9 +3,9 @@ package com.bootcamp.springbootuniversitywgs.controllers;
 import com.bootcamp.springbootuniversitywgs.dto.requests.StudentRequest;
 import com.bootcamp.springbootuniversitywgs.dto.responses.StudentResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
-import com.bootcamp.springbootuniversitywgs.models.Student;
 import com.bootcamp.springbootuniversitywgs.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 // Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait mahasiswa
 @RestController
@@ -28,8 +27,8 @@ public class StudentController {
 
     // Metode untuk mengambil semua data mahasiswa dari fungsi yg telah dibuat di service
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllStudent() {
-        List<StudentResponse> students = studentService.getAllStudent();
+    public ResponseEntity<ApiResponse> getAllStudent(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        Page<StudentResponse> students = studentService.getAllStudent(page, limit);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
