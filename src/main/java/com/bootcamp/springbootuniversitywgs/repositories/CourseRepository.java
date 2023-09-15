@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
     // Mengambil daftar semua matkul yang tidak dihapus
-    List<Course> findAllByIsDeletedFalse();
+    List<Course> findAllByDeletedAtIsNullOrderByName();
     // Mengambil matkul berdasarkan ID yang tidak dihapus (jika ada)
-    Optional<Course> findByIdAndIsDeletedFalse(Long id);
+    Optional<Course> findByIdAndDeletedAtIsNull(Long id);
 }

@@ -1,5 +1,7 @@
 package com.bootcamp.springbootuniversitywgs.controllers;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.CourseRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.CourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
 import com.bootcamp.springbootuniversitywgs.models.Course;
 import com.bootcamp.springbootuniversitywgs.services.CourseService;
@@ -27,7 +29,7 @@ public class CourseController {
     // Metode untuk mengambil semua data matkul dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllCourse() {
-        List<Course> courses = courseService.getAllCourse();
+        List<CourseResponse> courses = courseService.getAllCourse();
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -35,7 +37,7 @@ public class CourseController {
     // Metode untuk mengambil data matkul berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getCourseById(@PathVariable("id") Long id) {
-        Course courses = courseService.getCourseById(id);
+        CourseResponse courses = courseService.getCourseByIdResponse(id);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -46,8 +48,8 @@ public class CourseController {
 
     // Metode untuk membuat matkul baru dari fungsi yg telah dibuat di service
     @PostMapping
-    public ResponseEntity<ApiResponse> insertCourse(@RequestBody Course course) {
-        Course courses = courseService.insertCourse(course.getName());
+    public ResponseEntity<ApiResponse> insertCourse(@RequestBody CourseRequest courseRequest) {
+        CourseResponse courses = courseService.insertCourse(courseRequest);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -58,8 +60,8 @@ public class CourseController {
 
     // Metode untuk memperbarui informasi matkul dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateCourse(@PathVariable("id") Long id, @RequestBody Course course) {
-        Course courses = courseService.updateCourse(id, course.getName());
+    public ResponseEntity<ApiResponse> updateCourse(@PathVariable("id") Long id, @RequestBody CourseRequest courseRequest) {
+        CourseResponse courses = courseService.updateCourse(id, courseRequest);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         if (courses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
