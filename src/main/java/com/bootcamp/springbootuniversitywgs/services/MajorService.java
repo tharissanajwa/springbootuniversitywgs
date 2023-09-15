@@ -1,11 +1,15 @@
 package com.bootcamp.springbootuniversitywgs.services;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.MajorRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.MajorResponse;
 import com.bootcamp.springbootuniversitywgs.models.Major;
 import com.bootcamp.springbootuniversitywgs.repositories.MajorRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,18 +29,24 @@ public class MajorService {
     }
 
     // Metode untuk mendapatkan semua daftar jurusan yang belum terhapus melalui repository
-    public List<Major> getAllMajor() {
-        if (majorRepository.findAllByIsDeletedFalse().isEmpty()) {
+    public List<MajorResponse> getAllMajor() {
+        List<Major> result = majorRepository.findAllByDeletedAtIsNullOrderByName();
+        List<MajorResponse> responses = new ArrayList<>();
+        if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data major.";
         } else {
+            for (Major major : result) {
+                MajorResponse majorResponse = new MajorResponse(major);
+                responses.add(majorResponse);
+            }
             responseMessage = "Data successfully displayed.";
         }
-        return majorRepository.findAllByIsDeletedFalse();
+        return responses;
     }
 
     // Metode untuk mendapatkan data jurusan berdasarkan id melalui repository
     public Major getMajorById(Long id) {
-        Optional<Major> optionalMajor = majorRepository.findByIdAndIsDeletedFalse(id);
+        Optional<Major> optionalMajor = majorRepository.findByIdAndDeletedAtIsNull(id);
         if (optionalMajor.isPresent()) {
             responseMessage = "Data successfully displayed.";
             return optionalMajor.get();
@@ -45,38 +55,53 @@ public class MajorService {
         return null;
     }
 
+    // Metode untuk mendapatkan data jurusan melalui response berdasarkan id melalui repository
+    public MajorResponse getMajorByIdResponse(Long id) {
+        MajorResponse response = null;
+        Major major = getMajorById(id);
+        if (major != null) {
+            response = new MajorResponse(major);
+        }
+        return response;
+    }
+
     // Metode untuk menambahkan jurusan baru ke dalam data melalui repository
-    public Major insertMajor(String name) {
-        Major newMajor = null;
-        if (inputValidation(name) != "") {
+    public MajorResponse insertMajor(MajorRequest majorRequest) {
+        MajorResponse response = null;
+        Major result = new Major();
+        String name = utility.inputTrim(majorRequest.getName());
+        if (!inputValidation(name).isEmpty()) {
             responseMessage = inputValidation(name);
         } else {
-            newMajor = new Major(utility.inputTrim(name));
-            majorRepository.save(newMajor);
+            result.setName(name);
+            majorRepository.save(result);
+            response = new MajorResponse(result);
             responseMessage = "Data successfully added!";
         }
-        return newMajor;
+        return response;
     }
 
     // Metode untuk memperbarui informasi jurusan melalui repository
-    public Major updateMajor(Long id, String name) {
-        Major major = null;
+    public MajorResponse updateMajor(Long id, MajorRequest majorRequest) {
+        MajorResponse response = null;
+        String name = utility.inputTrim(majorRequest.getName());
         if (inputValidation(name) != "") {
             responseMessage = inputValidation(name);
         } else if (getMajorById(id) != null) {
-            getMajorById(id).setName(utility.inputTrim(name));
-            major = getMajorById(id);
+            Major major = getMajorById(id);
+            major.setName(name);
             majorRepository.save(major);
+            response = new MajorResponse(major);
             responseMessage = "Data successfully updated!";
         }
-        return major;
+        return response;
     }
 
     // Metode untuk menghapus data jurusan secara soft delete melalui repository
     public boolean disableMajor(Long id) {
         boolean result = false;
         if (getMajorById(id) != null) {
-            getMajorById(id).setDeleted(true);
+            getMajorById(id).setDeletedAt(new Date());
             Major major = getMajorById(id);
             majorRepository.save(major);
             result = true;
@@ -92,8 +117,6 @@ public class MajorService {
             result = "Sorry, major name cannot be blank.";
         } else if (utility.inputCheck(utility.inputTrim(name)) == 2) {
             result = "Sorry, major name can only filled by letters";
-        } else {
-            // do nothing
         }
         return result;
     }

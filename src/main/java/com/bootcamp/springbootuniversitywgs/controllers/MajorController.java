@@ -1,5 +1,7 @@
 package com.bootcamp.springbootuniversitywgs.controllers;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.MajorRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.MajorResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
 import com.bootcamp.springbootuniversitywgs.models.Major;
 import com.bootcamp.springbootuniversitywgs.services.MajorService;
@@ -27,7 +29,7 @@ public class MajorController {
     // Metode untuk mengambil semua data jurusan dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllMajor() {
-        List<Major> majors = majorService.getAllMajor();
+        List<MajorResponse> majors = majorService.getAllMajor();
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -35,7 +37,7 @@ public class MajorController {
     // Metode untuk mengambil data jurusan berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getMajorById(@PathVariable("id") Long id) {
-        Major majors = majorService.getMajorById(id);
+        MajorResponse majors = majorService.getMajorByIdResponse(id);
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -46,8 +48,8 @@ public class MajorController {
 
     // Metode untuk membuat jurusan baru dari fungsi yg telah dibuat di service
     @PostMapping
-    public ResponseEntity<ApiResponse> insertMajor(@RequestBody Major major) {
-        Major majors = majorService.insertMajor(major.getName());
+    public ResponseEntity<ApiResponse> insertMajor(@RequestBody MajorRequest majorRequest) {
+        MajorResponse majors = majorService.insertMajor(majorRequest);
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -58,8 +60,8 @@ public class MajorController {
 
     // Metode untuk memperbarui informasi jurusan dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateMajor(@PathVariable("id") Long id, @RequestBody Major major) {
-        Major majors = majorService.updateMajor(id, major.getName());
+    public ResponseEntity<ApiResponse> updateMajor(@PathVariable("id") Long id, @RequestBody MajorRequest majorRequest) {
+        MajorResponse majors = majorService.updateMajor(id, majorRequest);
         ApiResponse response = new ApiResponse(majorService.getResponseMessage(), majors);
         if (majors != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
