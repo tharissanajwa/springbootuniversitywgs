@@ -11,14 +11,10 @@ import javax.persistence.Table;
 // Ini adalah kelas Grade yang merepresentasikan data nilai ke database
 @Entity
 @Table(name = "grades")
-public class Grade {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Id nilai dijadikan auto increment
-    private String name; // Nama tugas
-    private Integer grade; // Nilai
+public class Grade extends BaseModel {
+    private String name;
+    private Integer grade;
 
-    // Id student course sebagai relasi dengan model student course, dan memiliki hubungan banyak ke satu
     @ManyToOne
     @JoinColumn(name = "student_course_id")
     private StudentCourse studentCourse;
@@ -32,15 +28,6 @@ public class Grade {
         this.name = name;
         this.grade = grade;
         this.studentCourse = studentCourse;
-    }
-
-    // Metode getter setter untuk field-field yg dibutuhkan
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {

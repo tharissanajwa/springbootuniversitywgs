@@ -10,5 +10,5 @@ public interface GradeRepository extends JpaRepository<Grade, Long> {
     // Validasi apakah student course sudah diberi nilai
     Optional<Grade> findByNameAndStudentCourseId(String name, Long studentCourseId);
     // Mengambil data nilai berdasarkan id student course
-    List<Grade> findByStudentCourseId(Long studentCourseId);
+    List<Grade> findByStudentCourseIdOrderByName(Long studentCourseId);
 }

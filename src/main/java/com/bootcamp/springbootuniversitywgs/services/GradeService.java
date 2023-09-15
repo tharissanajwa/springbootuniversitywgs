@@ -1,11 +1,14 @@
 package com.bootcamp.springbootuniversitywgs.services;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.GradeRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.GradeResponse;
 import com.bootcamp.springbootuniversitywgs.models.Grade;
 import com.bootcamp.springbootuniversitywgs.repositories.GradeRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,13 +32,19 @@ public class GradeService {
     }
 
     // Metode untuk mendapatkan semua daftar nilai melalui repository
-    public List<Grade> getAllGrade() {
-        if (gradeRepository.findAll().isEmpty()) {
+    public List<GradeResponse> getAllGrade() {
+        List<Grade> result = gradeRepository.findAll();
+        List<GradeResponse> responses = new ArrayList<>();
+        if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data grade.";
         } else {
+            for (Grade grade : result) {
+                GradeResponse gradeResponse = new GradeResponse(grade);
+                responses.add(gradeResponse);
+            }
             responseMessage = "Data successfully displayed.";
         }
-        return gradeRepository.findAll();
+        return responses;
     }
 
     // Metode untuk mendapatkan data nilai berdasarkan id melalui repository
@@ -49,50 +58,93 @@ public class GradeService {
         return null;
     }
 
+    // Metode untuk mendapatkan data nilai melalui response berdasarkan id melalui repository
+    public GradeResponse getGradeByIdResponse(Long id) {
+        GradeResponse response = null;
+        Grade grade = getGradeById(id);
+        if (grade != null) {
+            response = new GradeResponse(grade);
+        }
+        return response;
+    }
+
     // Metode untuk mendapatkan data nilai berdasarkan id student course melalui repository
-    public List<Grade> getGradeByStudentCourseId(Long studentCourseId) {
-        List<Grade> grades = gradeRepository.findByStudentCourseId(studentCourseId);
+    public List<GradeResponse> getGradeByStudentCourseId(Long studentCourseId) {
+        List<Grade> grades = gradeRepository.findByStudentCourseIdOrderByName(studentCourseId);
+        List<GradeResponse> responses = new ArrayList<>();
         if (!grades.isEmpty()) {
+            for (Grade grade : grades) {
+                GradeResponse gradeResponse = new GradeResponse(grade);
+                responses.add(gradeResponse);
+            }
             responseMessage = "Data successfully displayed.";
-            return grades;
+            return responses;
         }
         responseMessage = "Sorry, student course not found.";
         return null;
     }
 
     // Metode untuk menambahkan nilai baru sesuai id student course ke dalam data melalui repository
-    public Grade insertGrade(String name, Integer grade, Long studentCourseId) {
-        Grade newGrade = null;
-        if (inputValidation(name, grade, studentCourseId) != "") {
+    public GradeResponse insertGrade(GradeRequest gradeRequest) {
+        GradeResponse response = null;
+        Grade result = new Grade();
+        String name = utility.inputTrim(gradeRequest.getName());
+        Integer grade = gradeRequest.getGrade();
+        Long studentCourseId = gradeRequest.getStudentCourseId();
+        if (!inputValidation(name, grade, studentCourseId).isEmpty()) {
             responseMessage = inputValidation(name, grade, studentCourseId);
         } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
             responseMessage = "Data already exists!";
         } else {
-            newGrade = new Grade(utility.inputTrim(name), grade, studentCourseService.getStudentCourseById(studentCourseId));
-            gradeRepository.save(newGrade);
+            result.setStudentCourse(studentCourseService.getStudentCourseById(studentCourseId));
+            result.setName(name);
+            result.setGrade(grade);
+            gradeRepository.save(result);
+            response = new GradeResponse(result);
             responseMessage = "Data successfully added!";
         }
-        return newGrade;
+        return response;
     }
 
     // Metode untuk memperbarui informasi nilai melalui repository
-    public Grade updateGrade(Long id, String name, Integer grade, Long studentCourseId) {
-        Grade updateGrade = null;
+    public GradeResponse updateGrade(Long id, GradeRequest gradeRequest) {
+        GradeResponse response = null;
+        String name = utility.inputTrim(gradeRequest.getName());
+        Integer grade = gradeRequest.getGrade();
+        Long studentCourseId = gradeRequest.getStudentCourseId();
         if (getGradeById(id) == null) {
             responseMessage = "Sorry, id grade is not found!";
-        } else if (inputValidation(name, grade, studentCourseId) != "") {
+        } else if (!inputValidation(name, grade, studentCourseId).isEmpty()) {
             responseMessage = inputValidation(name, grade, studentCourseId);
         } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
             responseMessage = "Data already exists!";
         } else {
-            getGradeById(id).setName(utility.inputTrim(name));
-            getGradeById(id).setGrade(grade);
-            getGradeById(id).setStudentCourse(studentCourseService.getStudentCourseById(studentCourseId));
-            updateGrade = getGradeById(id);
-            gradeRepository.save(updateGrade);
+            Grade result = getGradeById(id);
+            result.setName(name);
+            result.setStudentCourse(studentCourseService.getStudentCourseById(studentCourseId));
+            gradeRepository.save(result);
+            response = new GradeResponse(result);
             responseMessage = "Data successfully updated!";
         }
-        return updateGrade;
+        return response;
+    }
+
+    // Metode untuk memperbarui informasi nilai melalui repository
+    public GradeResponse updateGradeValue(Long id, GradeRequest gradeRequest) {
+        GradeResponse response = null;
+        Integer grade = gradeRequest.getGrade();
+        if (getGradeById(id) == null) {
+            responseMessage = "Sorry, id grade is not found!";
+        } else if (utility.gradeCheck(grade) == 1) {
+            responseMessage = "Sorry, the grades should be between 0-100";
+        }  else {
+            Grade result = getGradeById(id);
+            result.setGrade(grade);
+            gradeRepository.save(result);
+            response = new GradeResponse(result);
+            responseMessage = "Data successfully updated!";
+        }
+        return response;
     }
 
     // Metode untuk memvalidasi inputan pengguna dan id student course apakah ada atau tidak
@@ -108,8 +160,6 @@ public class GradeService {
             result = "Sorry, id student course is required!";
         } else if (studentCourseService.getStudentCourseById(studentCourseId) == null) {
             result = "Sorry, id student course is not found!";
-        } else {
-            // do nothing
         }
         return result;
     }
