@@ -23,9 +23,6 @@ public class CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    @Autowired
-    private Utility utility;
-
     private String responseMessage; // Pesan status untuk memberi informasi kepada pengguna
 
     // Metode untuk mendapatkan pesan status
@@ -39,13 +36,13 @@ public class CourseService {
         Page<Course> result = courseRepository.findAllByDeletedAtIsNullOrderByName(pageable);
         List<CourseResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
-            responseMessage = "Data doesn't exists, please insert new data course.";
+            responseMessage = Utility.message("data_doesnt_exists");
         } else {
             for (Course course : result.getContent()) {
                 CourseResponse courseResponse = new CourseResponse(course);
                 responses.add(courseResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
         }
         return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
@@ -54,10 +51,10 @@ public class CourseService {
     public Course getCourseById(Long id) {
         Optional<Course> optionalCourse = courseRepository.findByIdAndDeletedAtIsNull(id);
         if (optionalCourse.isPresent()) {
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return optionalCourse.get();
         }
-        responseMessage = "Sorry, id course is not found.";
+        responseMessage = Utility.message("course_not_found");
         return null;
     }
 
@@ -75,14 +72,14 @@ public class CourseService {
     public CourseResponse insertCourse(CourseRequest courseRequest) {
         CourseResponse response = null;
         Course result = new Course();
-        String name = utility.inputTrim(courseRequest.getName());
+        String name = Utility.inputTrim(courseRequest.getName());
         if (!inputValidation(name).isEmpty()) {
             responseMessage = inputValidation(name);
         } else {
             result.setName(name);
             courseRepository.save(result);
             response = new CourseResponse(result);
-            responseMessage = "Data successfully added!";
+            responseMessage = Utility.message("data_added");
         }
         return response;
     }
@@ -90,7 +87,7 @@ public class CourseService {
     // Metode untuk memperbarui informasi matkul melalui repository
     public CourseResponse updateCourse(Long id, CourseRequest courseRequest) {
         CourseResponse response = null;
-        String name = utility.inputTrim(courseRequest.getName());
+        String name = Utility.inputTrim(courseRequest.getName());
         if (!inputValidation(name).isEmpty()) {
             responseMessage = inputValidation(name);
         } else if (getCourseById(id) != null) {
@@ -98,7 +95,7 @@ public class CourseService {
             course.setName(name);
             courseRepository.save(course);
             response = new CourseResponse(course);
-            responseMessage = "Data successfully updated!";
+            responseMessage = Utility.message("data_updated");
         }
         return response;
     }
@@ -111,7 +108,7 @@ public class CourseService {
             course.setDeletedAt(new Date());
             courseRepository.save(course);
             result = true;
-            responseMessage = "Data deactivated successfully!";
+            responseMessage = Utility.message("data_deleted");
         }
         return result;
     }
@@ -119,9 +116,9 @@ public class CourseService {
     // Metode untuk memvalidasi inputan pengguna
     private String inputValidation(String name) {
         String result = "";
-        if (utility.inputContainsNumber(utility.inputTrim(name)) == 1) {
+        if (Utility.inputContainsNumber(Utility.inputTrim(name)) == 1) {
             result = "Sorry, course name cannot be blank.";
-        } else if (utility.inputContainsNumber(utility.inputTrim(name)) == 2) {
+        } else if (Utility.inputContainsNumber(Utility.inputTrim(name)) == 2) {
             result = "Sorry, course name can only filled by letters and numbers";
         }
         return result;

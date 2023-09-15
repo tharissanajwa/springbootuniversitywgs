@@ -26,9 +26,6 @@ public class StudentService {
     @Autowired
     private MajorService majorService;
 
-    @Autowired
-    private Utility utility;
-
     private String responseMessage; // Pesan status untuk memberi informasi kepada pengguna
 
     // Metode untuk mendapatkan pesan status
@@ -42,13 +39,13 @@ public class StudentService {
         Page<Student> result = studentRepository.findAllByDeletedAtIsNullOrderByName(pageable);
         List<StudentResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
-            responseMessage = "Data doesn't exists, please insert new data student.";
+            responseMessage = Utility.message("data_doesnt_exists");
         } else {
             for (Student student : result.getContent()) {
                 StudentResponse studentResponse = new StudentResponse(student);
                 responses.add(studentResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
         }
         return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
@@ -57,10 +54,10 @@ public class StudentService {
     public Student getStudentById(Long id) {
         Optional<Student> optionalStudent = studentRepository.findByIdAndDeletedAtIsNull(id);
         if (optionalStudent.isPresent()) {
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return optionalStudent.get();
         }
-        responseMessage = "Sorry, id student is not found.";
+        responseMessage = Utility.message("student_not_found");
         return null;
     }
 
@@ -78,7 +75,7 @@ public class StudentService {
     public StudentResponse insertStudent(StudentRequest studentRequest) {
         StudentResponse response = null;
         Student result = new Student();
-        String name = utility.inputTrim(studentRequest.getName());
+        String name = Utility.inputTrim(studentRequest.getName());
         Long majorId = studentRequest.getMajorId();
         if (!inputValidation(name, majorId).isEmpty()) {
             responseMessage = inputValidation(name, majorId);
@@ -87,7 +84,7 @@ public class StudentService {
             result.setMajor(majorService.getMajorById(majorId));
             studentRepository.save(result);
             response = new StudentResponse(result);
-            responseMessage = "Data successfully added!";
+            responseMessage = Utility.message("data_added");
         }
         return response;
     }
@@ -95,7 +92,7 @@ public class StudentService {
     // Metode untuk memperbarui informasi mahasiswa melalui repository
     public StudentResponse updateStudent(Long id, StudentRequest studentRequest) {
         StudentResponse response = null;
-        String name = utility.inputTrim(studentRequest.getName());
+        String name = Utility.inputTrim(studentRequest.getName());
         Long majorId = studentRequest.getMajorId();
         if (!inputValidation(name, majorId).isEmpty()) {
             responseMessage = inputValidation(name, majorId);
@@ -105,7 +102,7 @@ public class StudentService {
             student.setMajor(majorService.getMajorById(majorId));
             studentRepository.save(student);
             response = new StudentResponse(student);
-            responseMessage = "Data successfully updated!";
+            responseMessage = Utility.message("data_updated");
         }
         return response;
     }
@@ -118,7 +115,7 @@ public class StudentService {
             student.setDeletedAt(new Date());
             studentRepository.save(student);
             result = true;
-            responseMessage = "Data deactivated successfully!";
+            responseMessage = Utility.message("data_deleted");
         }
         return result;
     }
@@ -126,14 +123,14 @@ public class StudentService {
     // Metode untuk memvalidasi inputan pengguna dan mengecek apakah id jurusan nya ada atau tidak
     private String inputValidation(String name, Long majorId) {
         String result = "";
-        if (utility.inputCheck(utility.inputTrim(name)) == 1) {
+        if (Utility.inputCheck(Utility.inputTrim(name)) == 1) {
             result = "Sorry, major name cannot be blank.";
-        } else if (utility.inputCheck(utility.inputTrim(name)) == 2) {
+        } else if (Utility.inputCheck(Utility.inputTrim(name)) == 2) {
             result = "Sorry, major name can only filled by letters";
         } else if (majorId == null) {
             result = "Sorry, id major is required.";
         } else if (majorService.getMajorById(majorId) == null) {
-            result = "Sorry, id major is not found.";
+            result = Utility.message("major_not_found");
         }
         return result;
     }

@@ -2,12 +2,17 @@ package com.bootcamp.springbootuniversitywgs.utilities;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ResourceBundle;
+
 // Kelas ini bertanggung jawab untuk mengelola semua validasi dari inputan pengguna
 @Service
 public class Utility {
+    public static String message(String key) {
+        return ResourceBundle.getBundle("response-message").getString(key);
+    }
 
     // Metode untuk menghilangkan spasi berlebih
-    public String inputTrim(String input) {
+    public static String inputTrim(String input) {
         String inputTrim;
         if (input == null) {
             inputTrim = null;
@@ -18,7 +23,7 @@ public class Utility {
     }
 
     // Metode untuk memberikan validasi inputan pengguna
-    public int inputCheck(String input) {
+    public static int inputCheck(String input) {
         int valid = 0;
         if (input == null || input.isEmpty()) {
             valid = 1; // Jika inputan pengguna berupa null atau kosong, maka akan memberikan nilai 1(yang berarti error)
@@ -29,7 +34,7 @@ public class Utility {
     }
 
     // Metode untuk memberikan validasi inputan pengguna
-    public int inputContainsNumber(String input) {
+    public static int inputContainsNumber(String input) {
         int valid = 0;
         if (input == null || input.isEmpty()) {
             valid = 1; // Jika inputan pengguna berupa null atau kosong, maka akan memberikan nilai 1(yang berarti error)
@@ -40,7 +45,7 @@ public class Utility {
     }
 
     // Metode untuk memberikan validasi inputan nilai quiz/ujian pengguna
-    public int gradeCheck(Integer grade) {
+    public static int gradeCheck(Integer grade) {
         int valid = 0;
         if (grade != null) {
             if (grade < 0 || grade > 100) {

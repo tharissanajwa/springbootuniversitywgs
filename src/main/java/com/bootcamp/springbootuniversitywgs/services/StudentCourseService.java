@@ -4,6 +4,7 @@ import com.bootcamp.springbootuniversitywgs.dto.requests.StudentCourseRequest;
 import com.bootcamp.springbootuniversitywgs.dto.responses.StudentCourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentCourseRepository;
+import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -40,13 +41,13 @@ public class StudentCourseService {
         Page<StudentCourse> result = studentCourseRepository.findAll(pageable);
         List<StudentCourseResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
-            responseMessage = "Data doesn't exists, please insert new data student course.";
+            responseMessage = Utility.message("data_doesnt_exists");
         } else {
             for (StudentCourse studentCourse : result.getContent()) {
                 StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
                 responses.add(studentCourseResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
         }
         return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
@@ -55,10 +56,10 @@ public class StudentCourseService {
     public StudentCourse getStudentCourseById(Long id) {
         Optional<StudentCourse> optionalStudentCourse = studentCourseRepository.findById(id);
         if (optionalStudentCourse.isPresent()) {
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return optionalStudentCourse.get();
         }
-        responseMessage = "Sorry, id student course is not found.";
+        responseMessage = Utility.message("student_course_not_found");
         return null;
     }
 
@@ -82,10 +83,10 @@ public class StudentCourseService {
                 StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
                 responses.add(studentCourseResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return new PageImpl<>(responses, PageRequest.of(page, limit), studentCourses.getTotalElements());
         }
-        responseMessage = "Sorry, student not found";
+        Utility.message("student_not_found");
         return null;
     }
 
@@ -98,13 +99,13 @@ public class StudentCourseService {
         if (!inputValidation(studentId, courseId).isEmpty()) {
             responseMessage = inputValidation(studentId, courseId);
         } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
-            responseMessage = "Data already exists!";
+            responseMessage = Utility.message("data_already_exists");
         } else {
             result.setStudent(studentService.getStudentById(studentId));
             result.setCourse(courseService.getCourseById(courseId));
             studentCourseRepository.save(result);
             response = new StudentCourseResponse(result);
-            responseMessage = "Data successfully added!";
+            responseMessage = Utility.message("data_added");
         }
         return response;
     }
@@ -115,18 +116,18 @@ public class StudentCourseService {
         Long studentId = studentCourseRequest.getStudentId();
         Long courseId = studentCourseRequest.getCourseId();
         if (getStudentCourseById(id) == null) {
-            responseMessage = "Sorry, id student course is not found.";
+            responseMessage = Utility.message("student_course_not_found");
         } else if (!inputValidation(studentId, courseId).isEmpty()) {
             responseMessage = inputValidation(studentId, courseId);
         } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
-            responseMessage = "Data already exists!";
+            responseMessage = Utility.message("data_already_exists");
         } else {
             StudentCourse studentCourse = getStudentCourseById(id);
             studentCourse.setStudent(studentService.getStudentById(studentId));
             studentCourse.setCourse(courseService.getCourseById(courseId));
             studentCourseRepository.save(studentCourse);
             response = new StudentCourseResponse(studentCourse);
-            responseMessage = "Data successfully updated!";
+            responseMessage = Utility.message("data_updated");
         }
         return response;
     }
@@ -139,9 +140,9 @@ public class StudentCourseService {
         } else if (courseId == null) {
             result = "Sorry, id course is required!";
         } else if (studentService.getStudentById(studentId) == null) {
-            result = "Sorry, id student is not found!";
+            result = Utility.message("student_not_found");
         } else if (courseService.getCourseById(courseId) == null) {
-            result = "Sorry, id course is not found!";
+            result = Utility.message("course_not_found");
         }
         return result;
     }

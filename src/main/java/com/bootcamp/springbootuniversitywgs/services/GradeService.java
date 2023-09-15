@@ -25,9 +25,6 @@ public class GradeService {
     @Autowired
     private StudentCourseService studentCourseService;
 
-    @Autowired
-    private Utility utility;
-
     private String responseMessage; // Pesan status untuk memberi informasi kepada pengguna
 
     // Metode untuk mendapatkan pesan status
@@ -41,13 +38,13 @@ public class GradeService {
         Page<Grade> result = gradeRepository.findAll(pageable);
         List<GradeResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
-            responseMessage = "Data doesn't exists, please insert new data grade.";
+            responseMessage = Utility.message("data_doesnt_exists");
         } else {
             for (Grade grade : result) {
                 GradeResponse gradeResponse = new GradeResponse(grade);
                 responses.add(gradeResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
         }
         return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
@@ -56,10 +53,10 @@ public class GradeService {
     public Grade getGradeById(Long id) {
         Optional<Grade> optionalGrade = gradeRepository.findById(id);
         if (optionalGrade.isPresent()) {
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return optionalGrade.get();
         }
-        responseMessage = "Sorry, id grade is not found.";
+        responseMessage = Utility.message("grade_not_found");
         return null;
     }
 
@@ -83,10 +80,10 @@ public class GradeService {
                 GradeResponse gradeResponse = new GradeResponse(grade);
                 responses.add(gradeResponse);
             }
-            responseMessage = "Data successfully displayed.";
+            responseMessage = Utility.message("data_displayed");
             return new PageImpl<>(responses, PageRequest.of(page, limit), grades.getTotalElements());
         }
-        responseMessage = "Sorry, student course not found.";
+        responseMessage = Utility.message("student_course_not_found");
         return null;
     }
 
@@ -94,20 +91,20 @@ public class GradeService {
     public GradeResponse insertGrade(GradeRequest gradeRequest) {
         GradeResponse response = null;
         Grade result = new Grade();
-        String name = utility.inputTrim(gradeRequest.getName());
+        String name = Utility.inputTrim(gradeRequest.getName());
         Integer grade = gradeRequest.getGrade();
         Long studentCourseId = gradeRequest.getStudentCourseId();
         if (!inputValidation(name, grade, studentCourseId).isEmpty()) {
             responseMessage = inputValidation(name, grade, studentCourseId);
         } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
-            responseMessage = "Data already exists!";
+            responseMessage = Utility.message("data_already_exists");
         } else {
             result.setStudentCourse(studentCourseService.getStudentCourseById(studentCourseId));
             result.setName(name);
             result.setGrade(grade);
             gradeRepository.save(result);
             response = new GradeResponse(result);
-            responseMessage = "Data successfully added!";
+            responseMessage = Utility.message("data_added");
         }
         return response;
     }
@@ -115,22 +112,22 @@ public class GradeService {
     // Metode untuk memperbarui informasi nilai melalui repository
     public GradeResponse updateGrade(Long id, GradeRequest gradeRequest) {
         GradeResponse response = null;
-        String name = utility.inputTrim(gradeRequest.getName());
+        String name = Utility.inputTrim(gradeRequest.getName());
         Integer grade = gradeRequest.getGrade();
         Long studentCourseId = gradeRequest.getStudentCourseId();
         if (getGradeById(id) == null) {
-            responseMessage = "Sorry, id grade is not found!";
+            responseMessage = Utility.message("grade_not_found");
         } else if (!inputValidation(name, grade, studentCourseId).isEmpty()) {
             responseMessage = inputValidation(name, grade, studentCourseId);
         } else if (gradeRepository.findByNameAndStudentCourseId(name, studentCourseId).isPresent()) {
-            responseMessage = "Data already exists!";
+            responseMessage = Utility.message("data_already_exists");
         } else {
             Grade result = getGradeById(id);
             result.setName(name);
             result.setStudentCourse(studentCourseService.getStudentCourseById(studentCourseId));
             gradeRepository.save(result);
             response = new GradeResponse(result);
-            responseMessage = "Data successfully updated!";
+            responseMessage = Utility.message("data_updated");
         }
         return response;
     }
@@ -140,15 +137,15 @@ public class GradeService {
         GradeResponse response = null;
         Integer grade = gradeRequest.getGrade();
         if (getGradeById(id) == null) {
-            responseMessage = "Sorry, id grade is not found!";
-        } else if (utility.gradeCheck(grade) == 1) {
-            responseMessage = "Sorry, the grades should be between 0-100";
+            responseMessage = Utility.message("grade_not_found");
+        } else if (Utility.gradeCheck(grade) == 1) {
+            responseMessage = Utility.message("validation_grade");
         }  else {
             Grade result = getGradeById(id);
             result.setGrade(grade);
             gradeRepository.save(result);
             response = new GradeResponse(result);
-            responseMessage = "Data successfully updated!";
+            responseMessage = Utility.message("data_updated");
         }
         return response;
     }
@@ -156,16 +153,16 @@ public class GradeService {
     // Metode untuk memvalidasi inputan pengguna dan id student course apakah ada atau tidak
     private String inputValidation(String name, Integer grade, Long studentCourseId) {
         String result = "";
-        if (utility.inputContainsNumber(utility.inputTrim(name)) == 1) {
+        if (Utility.inputContainsNumber(Utility.inputTrim(name)) == 1) {
             result = "Sorry, assignment name cannot be blank.";
-        } else if (utility.inputContainsNumber(utility.inputTrim(name)) == 2) {
+        } else if (Utility.inputContainsNumber(Utility.inputTrim(name)) == 2) {
             result = "Sorry, assignment name can only filled by letters and numbers";
-        } else if (utility.gradeCheck(grade) == 1) {
-            result = "Sorry, the grades should be between 0-100";
+        } else if (Utility.gradeCheck(grade) == 1) {
+            result = Utility.message("validation_grade");
         } else if (studentCourseId == null) {
             result = "Sorry, id student course is required!";
         } else if (studentCourseService.getStudentCourseById(studentCourseId) == null) {
-            result = "Sorry, id student course is not found!";
+            result = Utility.message("student_course_not_found");
         }
         return result;
     }
