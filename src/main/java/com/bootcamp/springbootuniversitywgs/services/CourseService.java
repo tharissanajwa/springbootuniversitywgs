@@ -6,6 +6,10 @@ import com.bootcamp.springbootuniversitywgs.models.Course;
 import com.bootcamp.springbootuniversitywgs.repositories.CourseRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,19 +34,20 @@ public class CourseService {
     }
 
     // Metode untuk mendapatkan semua daftar matkul yang belum terhapus melalui repository
-    public List<CourseResponse> getAllCourse() {
-        List<Course> result = courseRepository.findAllByDeletedAtIsNullOrderByName();
+    public Page<CourseResponse> getAllCourse(int page, int limit) {
+        Pageable pageable = PageRequest.of(page, limit);
+        Page<Course> result = courseRepository.findAllByDeletedAtIsNullOrderByName(pageable);
         List<CourseResponse> responses = new ArrayList<>();
         if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data course.";
         } else {
-            for (Course course : result) {
+            for (Course course : result.getContent()) {
                 CourseResponse courseResponse = new CourseResponse(course);
                 responses.add(courseResponse);
             }
             responseMessage = "Data successfully displayed.";
         }
-        return responses;
+        return new PageImpl<>(responses, PageRequest.of(page, limit), result.getTotalElements());
     }
 
     // Metode untuk mendapatkan data matkul berdasarkan id melalui repository
@@ -101,9 +106,9 @@ public class CourseService {
     // Metode untuk menghapus data matkul secara soft delete melalui repository
     public boolean disableCourse(Long id) {
         boolean result = false;
-        if (getCourseById(id) != null) {
-            getCourseById(id).setDeletedAt(new Date());
-            Course course = getCourseById(id);
+        Course course = getCourseById(id);
+        if (course != null) {
+            course.setDeletedAt(new Date());
             courseRepository.save(course);
             result = true;
             responseMessage = "Data deactivated successfully!";

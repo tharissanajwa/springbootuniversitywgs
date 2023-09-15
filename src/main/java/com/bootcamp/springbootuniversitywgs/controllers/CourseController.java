@@ -3,9 +3,9 @@ package com.bootcamp.springbootuniversitywgs.controllers;
 import com.bootcamp.springbootuniversitywgs.dto.requests.CourseRequest;
 import com.bootcamp.springbootuniversitywgs.dto.responses.CourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
-import com.bootcamp.springbootuniversitywgs.models.Course;
 import com.bootcamp.springbootuniversitywgs.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,9 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 // Kelas ini bertindak sebagai controller untuk mengatur permintaan terkait mata kuliah
 @RestController
@@ -28,8 +27,8 @@ public class CourseController {
 
     // Metode untuk mengambil semua data matkul dari fungsi yg telah dibuat di service
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllCourse() {
-        List<CourseResponse> courses = courseService.getAllCourse();
+    public ResponseEntity<ApiResponse> getAllCourse(@RequestParam("page") int page, @RequestParam("limit") int limit) {
+        Page<CourseResponse> courses = courseService.getAllCourse(page, limit);
         ApiResponse response = new ApiResponse(courseService.getResponseMessage(), courses);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
