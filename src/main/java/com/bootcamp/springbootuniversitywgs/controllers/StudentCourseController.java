@@ -1,5 +1,7 @@
 package com.bootcamp.springbootuniversitywgs.controllers;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.StudentCourseRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.StudentCourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.services.StudentCourseService;
@@ -26,7 +28,7 @@ public class StudentCourseController {
     // Metode untuk mengambil semua data mahasiswa memilih matkul dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllStudentCourse() {
-        List<StudentCourse> studentCourses = studentCourseService.getAllStudentCourse();
+        List<StudentCourseResponse> studentCourses = studentCourseService.getAllStudentCourse();
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -34,7 +36,7 @@ public class StudentCourseController {
     // Metode untuk mengambil data mahasiswa memilih matkul berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getStudentCourseById(@PathVariable("id") Long id) {
-        StudentCourse studentCourses = studentCourseService.getStudentCourseById(id);
+        StudentCourseResponse studentCourses = studentCourseService.getStudentCourseByIdResponse(id);
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -46,7 +48,7 @@ public class StudentCourseController {
     // Metode untuk mengambil data mahasiswa memilih matkul berdasarkan id mahasiswa dari fungsi yg telah dibuat di service
     @GetMapping("/students/{student}")
     public ResponseEntity<ApiResponse> getStudentCourseByStudentId(@PathVariable("student") Long studentId) {
-        List<StudentCourse> studentCourses = studentCourseService.getStudentCourseByStudentId(studentId);
+        List<StudentCourseResponse> studentCourses = studentCourseService.getStudentCourseByStudentId(studentId);
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -57,8 +59,8 @@ public class StudentCourseController {
 
     // Metode untuk membuat data mahasiswa memilih matkul baru dari fungsi yg telah dibuat di service
     @PostMapping
-    public ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourse studentCourse) {
-        StudentCourse studentCourses = studentCourseService.insertStudentCourse(studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
+    public ResponseEntity<ApiResponse> insertStudentCourse(@RequestBody StudentCourseRequest studentCourseRequest) {
+        StudentCourseResponse studentCourses = studentCourseService.insertStudentCourse(studentCourseRequest);
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -69,8 +71,8 @@ public class StudentCourseController {
 
     // Metode untuk memperbarui informasi mahasiswa memilih dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateStudentCourse(@PathVariable("id") Long id, @RequestBody StudentCourse studentCourse) {
-        StudentCourse studentCourses = studentCourseService.updateStudentCourse(id, studentCourse.getStudent().getId(), studentCourse.getCourse().getId());
+    public ResponseEntity<ApiResponse> updateStudentCourse(@PathVariable("id") Long id, @RequestBody StudentCourseRequest studentCourseRequest) {
+        StudentCourseResponse studentCourses = studentCourseService.updateStudentCourse(id, studentCourseRequest);
         ApiResponse response = new ApiResponse(studentCourseService.getResponseMessage(), studentCourses);
         if (studentCourses != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);

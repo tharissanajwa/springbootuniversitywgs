@@ -10,5 +10,5 @@ public interface StudentCourseRepository extends JpaRepository<StudentCourse, Lo
     // Validasi apakah mahasiswa sudah memilih matkul tersebut
     Optional<StudentCourse> findByStudentIdAndCourseId(Long studentId, Long courseId);
     // Mengambil data mahasiswa memilih matkul berdasarkan id mahasiswa
-    List<StudentCourse> findByStudentId(Long studentId);
+    List<StudentCourse> findByStudentIdOrderByStudentId(Long studentId);
 }

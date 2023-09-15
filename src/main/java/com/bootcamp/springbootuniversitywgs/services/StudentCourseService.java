@@ -1,10 +1,13 @@
 package com.bootcamp.springbootuniversitywgs.services;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.StudentCourseRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.StudentCourseResponse;
 import com.bootcamp.springbootuniversitywgs.models.StudentCourse;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentCourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +31,19 @@ public class StudentCourseService {
     }
 
     // Metode untuk mendapatkan semua daftar mahasiswa memilih matkul melalui repository
-    public List<StudentCourse> getAllStudentCourse() {
-        if (studentCourseRepository.findAll().isEmpty()) {
+    public List<StudentCourseResponse> getAllStudentCourse() {
+        List<StudentCourse> result = studentCourseRepository.findAll();
+        List<StudentCourseResponse> responses = new ArrayList<>();
+        if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student course.";
         } else {
+            for (StudentCourse studentCourse : result) {
+                StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
+                responses.add(studentCourseResponse);
+            }
             responseMessage = "Data successfully displayed.";
         }
-        return studentCourseRepository.findAll();
+        return responses;
     }
 
     // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id melalui repository
@@ -48,49 +57,72 @@ public class StudentCourseService {
         return null;
     }
 
+    // Metode untuk mendapatkan data mahasiswa melalui response memilih matkul berdasarkan id melalui repository
+    public StudentCourseResponse getStudentCourseByIdResponse(Long id) {
+        StudentCourseResponse response = null;
+        StudentCourse studentCourse = getStudentCourseById(id);
+        if (studentCourse != null) {
+            response = new StudentCourseResponse(studentCourse);
+        }
+        return response;
+    }
+
     // Metode untuk mendapatkan data mahasiswa memilih matkul berdasarkan id mahasiswa melalui repository
-    public List<StudentCourse> getStudentCourseByStudentId(Long studentId) {
-        List<StudentCourse> studentCourses = studentCourseRepository.findByStudentId(studentId);
+    public List<StudentCourseResponse> getStudentCourseByStudentId(Long studentId) {
+        List<StudentCourse> studentCourses = studentCourseRepository.findByStudentIdOrderByStudentId(studentId);
+        List<StudentCourseResponse> responses = new ArrayList<>();
         if (!studentCourses.isEmpty()) {
+            for (StudentCourse studentCourse : studentCourses) {
+                StudentCourseResponse studentCourseResponse = new StudentCourseResponse(studentCourse);
+                responses.add(studentCourseResponse);
+            }
             responseMessage = "Data successfully displayed.";
-            return studentCourses;
+            return responses;
         }
         responseMessage = "Sorry, student not found";
         return null;
     }
 
     // Metode untuk menambahkan data mahasiswa memilih matkul baru ke database melalui repository
-    public StudentCourse insertStudentCourse(Long studentId, Long courseId) {
-        StudentCourse newStudentCourse = null;
-        if (inputValidation(studentId, courseId) != "") {
+    public StudentCourseResponse insertStudentCourse(StudentCourseRequest studentCourseRequest) {
+        StudentCourseResponse response = null;
+        StudentCourse result = new StudentCourse();
+        Long studentId = studentCourseRequest.getStudentId();
+        Long courseId = studentCourseRequest.getCourseId();
+        if (!inputValidation(studentId, courseId).isEmpty()) {
             responseMessage = inputValidation(studentId, courseId);
         } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
             responseMessage = "Data already exists!";
         } else {
-            newStudentCourse = new StudentCourse(studentService.getStudentById(studentId), courseService.getCourseById(courseId));
-            studentCourseRepository.save(newStudentCourse);
+            result.setStudent(studentService.getStudentById(studentId));
+            result.setCourse(courseService.getCourseById(courseId));
+            studentCourseRepository.save(result);
+            response = new StudentCourseResponse(result);
             responseMessage = "Data successfully added!";
         }
-        return newStudentCourse;
+        return response;
     }
 
     // Metode untuk memperbarui informasi mahasiswa memilih matkul melalui repository
-    public StudentCourse updateStudentCourse(Long id, Long studentId, Long courseId) {
-        StudentCourse studentCourse = null;
+    public StudentCourseResponse updateStudentCourse(Long id, StudentCourseRequest studentCourseRequest) {
+        StudentCourseResponse response = null;
+        Long studentId = studentCourseRequest.getStudentId();
+        Long courseId = studentCourseRequest.getCourseId();
         if (getStudentCourseById(id) == null) {
             responseMessage = "Sorry, id student course is not found.";
-        } else if (inputValidation(studentId, courseId) != "") {
+        } else if (!inputValidation(studentId, courseId).isEmpty()) {
             responseMessage = inputValidation(studentId, courseId);
         } else if (studentCourseRepository.findByStudentIdAndCourseId(studentId, courseId).isPresent()) {
             responseMessage = "Data already exists!";
         } else {
-            getStudentCourseById(id).setStudent(studentService.getStudentById(studentId));
-            getStudentCourseById(id).setCourse(courseService.getCourseById(courseId));
-            studentCourse = getStudentCourseById(id);
+            StudentCourse studentCourse = getStudentCourseById(id);
+            studentCourse.setStudent(studentService.getStudentById(studentId));
+            studentCourse.setCourse(courseService.getCourseById(courseId));
             studentCourseRepository.save(studentCourse);
+            response = new StudentCourseResponse(studentCourse);
             responseMessage = "Data successfully updated!";
         }
-        return studentCourse;
+        return response;
     }
 
     // Metode untuk memvalidasi apakah id student dan id course ada dalam data
@@ -104,8 +136,6 @@ public class StudentCourseService {
             result = "Sorry, id student is not found!";
         } else if (courseService.getCourseById(courseId) == null) {
             result = "Sorry, id course is not found!";
-        } else {
-            // do nothing
         }
         return result;
     }
