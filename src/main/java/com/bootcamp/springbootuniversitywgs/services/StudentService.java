@@ -1,11 +1,15 @@
 package com.bootcamp.springbootuniversitywgs.services;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.StudentRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.StudentResponse;
 import com.bootcamp.springbootuniversitywgs.models.Student;
 import com.bootcamp.springbootuniversitywgs.repositories.StudentRepository;
 import com.bootcamp.springbootuniversitywgs.utilities.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,18 +33,24 @@ public class StudentService {
     }
 
     // Metode untuk mendapatkan semua daftar mahasiswa yang belum terhapus melalui repository
-    public List<Student> getAllStudent() {
-        if (studentRepository.findAllByIsDeletedFalse().isEmpty()) {
+    public List<StudentResponse> getAllStudent() {
+        List<Student> result = studentRepository.findAllByDeletedAtIsNullOrderByName();
+        List<StudentResponse> responses = new ArrayList<>();
+        if (result.isEmpty()) {
             responseMessage = "Data doesn't exists, please insert new data student.";
         } else {
+            for (Student student : result) {
+                StudentResponse studentResponse = new StudentResponse(student);
+                responses.add(studentResponse);
+            }
             responseMessage = "Data successfully displayed.";
         }
-        return studentRepository.findAllByIsDeletedFalse();
+        return responses;
     }
 
     // Metode untuk mendapatkan data mahasiswa berdasarkan id melalui repository
     public Student getStudentById(Long id) {
-        Optional<Student> optionalStudent = studentRepository.findByIdAndIsDeletedFalse(id);
+        Optional<Student> optionalStudent = studentRepository.findByIdAndDeletedAtIsNull(id);
         if (optionalStudent.isPresent()) {
             responseMessage = "Data successfully displayed.";
             return optionalStudent.get();
@@ -49,39 +59,57 @@ public class StudentService {
         return null;
     }
 
+    // Metode untuk mendapatkan data mahasiswa melalui response berdasarkan id melalui repository
+    public StudentResponse getStudentByIdResponse(Long id) {
+        StudentResponse response = null;
+        Student student = getStudentById(id);
+        if (student != null) {
+            response = new StudentResponse(student);
+        }
+        return response;
+    }
+
     // Metode untuk menambahkan mahasiswa baru ke dalam data melalui repository
-    public Student insertStudent(String name, Long majorId) {
-        Student newStudent = null;
-        if (inputValidation(name, majorId) != "") {
+    public StudentResponse insertStudent(StudentRequest studentRequest) {
+        StudentResponse response = null;
+        Student result = new Student();
+        String name = utility.inputTrim(studentRequest.getName());
+        Long majorId = studentRequest.getMajorId();
+        if (!inputValidation(name, majorId).isEmpty()) {
             responseMessage = inputValidation(name, majorId);
         } else {
-            newStudent = new Student(utility.inputTrim(name), majorService.getMajorById(majorId));
-            studentRepository.save(newStudent);
+            result.setName(name);
+            result.setMajor(majorService.getMajorById(majorId));
+            studentRepository.save(result);
+            response = new StudentResponse(result);
             responseMessage = "Data successfully added!";
         }
-        return newStudent;
+        return response;
     }
 
     // Metode untuk memperbarui informasi mahasiswa melalui repository
-    public Student updateStudent(Long id, String name, Long majorId) {
-        Student student = null;
-        if (inputValidation(name, majorId) != "") {
+    public StudentResponse updateStudent(Long id, StudentRequest studentRequest) {
+        StudentResponse response = null;
+        String name = utility.inputTrim(studentRequest.getName());
+        Long majorId = studentRequest.getMajorId();
+        if (!inputValidation(name, majorId).isEmpty()) {
             responseMessage = inputValidation(name, majorId);
         } else if (getStudentById(id) != null) {
-            getStudentById(id).setName(utility.inputTrim(name));
-            getStudentById(id).setMajor(majorService.getMajorById(majorId));
-            student = getStudentById(id);
+            Student student = getStudentById(id);
+            student.setName(name);
+            student.setMajor(majorService.getMajorById(majorId));
             studentRepository.save(student);
+            response = new StudentResponse(student);
             responseMessage = "Data successfully updated!";
         }
-        return student;
+        return response;
     }
 
     // Metode untuk menghapus data mahasiswa secara soft delete melalui repository
     public boolean disableStudent(Long id) {
         boolean result = false;
         if (getStudentById(id) != null) {
-            getStudentById(id).setDeleted(true);
+            getStudentById(id).setDeletedAt(new Date());
             Student student = getStudentById(id);
             studentRepository.save(student);
             result = true;
@@ -101,8 +129,6 @@ public class StudentService {
             result = "Sorry, id major is required.";
         } else if (majorService.getMajorById(majorId) == null) {
             result = "Sorry, id major is not found.";
-        } else {
-            // do nothing
         }
         return result;
     }

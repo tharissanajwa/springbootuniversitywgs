@@ -1,5 +1,7 @@
 package com.bootcamp.springbootuniversitywgs.controllers;
 
+import com.bootcamp.springbootuniversitywgs.dto.requests.StudentRequest;
+import com.bootcamp.springbootuniversitywgs.dto.responses.StudentResponse;
 import com.bootcamp.springbootuniversitywgs.models.ApiResponse;
 import com.bootcamp.springbootuniversitywgs.models.Student;
 import com.bootcamp.springbootuniversitywgs.services.StudentService;
@@ -27,7 +29,7 @@ public class StudentController {
     // Metode untuk mengambil semua data mahasiswa dari fungsi yg telah dibuat di service
     @GetMapping
     public ResponseEntity<ApiResponse> getAllStudent() {
-        List<Student> students = studentService.getAllStudent();
+        List<StudentResponse> students = studentService.getAllStudent();
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -35,7 +37,7 @@ public class StudentController {
     // Metode untuk mengambil data mahasiswa berdasarkan id dari fungsi yg telah dibuat di service
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getStudentById(@PathVariable("id") Long id) {
-        Student students = studentService.getStudentById(id);
+        StudentResponse students = studentService.getStudentByIdResponse(id);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -46,8 +48,8 @@ public class StudentController {
 
     // Metode untuk membuat mahasiswa baru dari fungsi yg telah dibuat di service
     @PostMapping
-    public ResponseEntity<ApiResponse> insertStudent(@RequestBody Student student) {
-        Student students = studentService.insertStudent(student.getName(), student.getMajor().getId());
+    public ResponseEntity<ApiResponse> insertStudent(@RequestBody StudentRequest studentRequest) {
+        StudentResponse students = studentService.insertStudent(studentRequest);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -58,8 +60,8 @@ public class StudentController {
 
     // Metode untuk memperbarui informasi mahasiswa dari fungsi yg telah dibuat di service
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateStudent(@PathVariable("id") Long id, @RequestBody Student student) {
-        Student students = studentService.updateStudent(id, student.getName(), student.getMajor().getId());
+    public ResponseEntity<ApiResponse> updateStudent(@PathVariable("id") Long id, @RequestBody StudentRequest studentRequest) {
+        StudentResponse students = studentService.updateStudent(id, studentRequest);
         ApiResponse response = new ApiResponse(studentService.getResponseMessage(), students);
         if (students != null) {
             return ResponseEntity.status(HttpStatus.OK).body(response);
